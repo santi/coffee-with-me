@@ -1,4 +1,4 @@
-package com.coffeewithme.coffeebackend
+package com.coffeewithme
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
