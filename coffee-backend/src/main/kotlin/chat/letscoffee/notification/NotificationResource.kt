@@ -16,10 +16,12 @@ class NotificationResource(
 
     @PostMapping("/subscribe")
     fun subscribe(
-        @RequestBody pushSubscription: PushSubscription
+        @RequestBody subscription: Subscription
     ): ResponseEntity<String> {
-        val registrationToken = "token" // TODO: Get token from pushSubscription request body
-        pushNotificationService.sendPushNotification(registrationToken)
+
+        val response = pushNotificationService.sendPushNotification(subscription)
+        // TODO: Handle response from PUSH API server gracefully
+
         return ResponseEntity("Successfully subscribed to push notifications", HttpStatus.ACCEPTED)
     }
 }
