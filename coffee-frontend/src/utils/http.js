@@ -6,7 +6,7 @@ function post(path, body) {
     method: "POST",
     mode: "cors"
   })
-  .then(response => response.json())
+  .then(response => response.text())
 }
 
 function get(path) {
