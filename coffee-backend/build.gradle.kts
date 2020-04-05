@@ -39,7 +39,6 @@ dependencies {
 	implementation("com.github.kittinunf.fuel:fuel-json:2.2.1") //Core package
 	implementation("com.github.kittinunf.fuel:fuel-gson:2.2.1") //Fuel Gson
 	implementation("com.google.code.gson:gson:2.8.5") //Gson
-	
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
