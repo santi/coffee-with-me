@@ -1,14 +1,23 @@
 package com.coffeewithme
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
 
-@RestController("/")
-class NotificationResource {
+@RestController("push")
+class NotificationResource(
+    private val pushNotificationService: PushNotificationService
+) {
 
-    @GetMapping("subscribe")
-    fun subscribe(): String {
-        return "Hello world!"
+    @PostMapping("/subscribe")
+    fun subscribe(
+        @RequestBody pushSubscription: PushSubscription
+    ): ResponseEntity<String> {
+        val registrationToken = "token" // TODO: Get token from pushSubscription request body
+        pushNotificationService.sendPushNotification(registrationToken)
+        return ResponseEntity("Successfully subscribed to push notifications", HttpStatus.ACCEPTED)
     }
 }
