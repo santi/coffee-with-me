@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import http from "./http";
+import base64 from "./base64";
 //the function to call the push server: https://github.com/Spyna/push-notification-demo/blob/master/front-end-react/src/utils/http.js
 
 import {
@@ -100,9 +101,19 @@ export default function usePushNotifications() {
   const onClickSendSubscriptionToPushServer = () => {
     setLoading(true);
     setError(false);
-    console.log(userSubscription)
+
+    // Get public key and user auth from the subscription object
+    const key = userSubscription.getKey ? userSubscription.getKey('p256dh') : '';
+    const auth = userSubscription.getKey ? userSubscription.getKey('auth') : '';
+
+      const subscription = {
+        endpoint: userSubscription.endpoint,
+        key: base64.encode(key),
+        auth: base64.encode(auth),
+      };
+
     http
-      .post("/push/subscribe", userSubscription)
+      .post("/push/subscribe", subscription)
       .then(function(response) {
         setPushServerSubscriptionId(response.id);
         setLoading(false);
