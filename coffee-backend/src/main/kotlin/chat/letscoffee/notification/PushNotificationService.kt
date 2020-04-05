@@ -1,10 +1,12 @@
-package com.coffeewithme
+package chat.letscoffee.notification
 
 import com.google.firebase.messaging.*
 import org.springframework.stereotype.Component
 
 @Component
-class PushNotificationService {
+class PushNotificationService(
+    private val firebaseMessaging: FirebaseMessaging
+) {
 
     fun sendPushNotification(registrationToken: String) {
         val message: Message = Message.builder()
@@ -28,7 +30,7 @@ class PushNotificationService {
             .setToken(registrationToken)
             .build()
 
-        val response = FirebaseMessaging.getInstance().sendAsync(message).get()
+        val response = firebaseMessaging.sendAsync(message).get()
         println("Successfully sent message: $response")
     }
 }

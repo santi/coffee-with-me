@@ -1,4 +1,4 @@
-package com.coffeewithme
+package chat.letscoffee.notification
 
 data class PushSubscription(
     val endpoint: String,
