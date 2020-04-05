@@ -1,4 +1,4 @@
-package com.coffeewithme
+package chat.letscoffee.meetings
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.gson.responseObject
 import org.springframework.stereotype.Component
