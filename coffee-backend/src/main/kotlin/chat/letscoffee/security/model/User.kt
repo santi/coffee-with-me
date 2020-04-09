@@ -6,6 +6,7 @@ import javax.validation.constraints.Email
 import javax.validation.constraints.NotNull
 
 @Entity
+@Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf<String>("email"))])
 class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +20,9 @@ class User {
     var emailVerified = false
     @JsonIgnore
     var password: String? = null
+
     @Enumerated(EnumType.STRING)
-    var provider: @NotNull AuthProvider? = null
+    var provider: AuthProvider? = null
     var providerId: String? = null
 
 }

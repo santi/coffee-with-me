@@ -6,6 +6,7 @@ import chat.letscoffee.security.repository.UserRepository
 import chat.letscoffee.security.security.CurrentUser
 import chat.letscoffee.security.security.UserPrincipal
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,7 +17,6 @@ class UserController(private val userRepository: UserRepository) {
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     fun getCurrentUser(@CurrentUser userPrincipal: UserPrincipal): User? {
-        return userRepository.findById(userPrincipal.getId())
-               .orElseThrow({ ResourceNotFoundException("User", "id", userPrincipal.getId()) })
+        return userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
     }
 }
