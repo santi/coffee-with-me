@@ -1,29 +1,32 @@
 package chat.letscoffee
 
-import com.google.auth.oauth2.GoogleCredentials
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
-import com.google.firebase.messaging.FirebaseMessaging
+import nl.martijndwars.webpush.PushService
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import java.security.Security
 
 
 @SpringBootApplication
 class CoffeeBackendApplication {
 
 	@Bean
-	fun firebaseMessaging(): FirebaseMessaging {
-		val serviceAccount = this::class.java.classLoader.getResourceAsStream(
-			"credentials/firebaseMessagingServiceAccount.json"
+	fun pushService(): PushService  {
+		// Add BouncyCastle as an algorithm provider
+		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(BouncyCastleProvider())
+		}
+
+		val vapidPublicKey = this::class.java.getResource(
+			"/credentials/VapidPublicKey").readText()
+		val vapidPrivateKey = this::class.java.getResource(
+			"/credentials/VapidPrivateKey").readText()
+
+		return PushService(
+			vapidPublicKey,
+			vapidPrivateKey
 		)
-
-		val options = FirebaseOptions.Builder()
-			.setCredentials(GoogleCredentials.fromStream(serviceAccount))
-			.build()
-
-		FirebaseApp.initializeApp(options)
-		return FirebaseMessaging.getInstance()
 	}
 }
 

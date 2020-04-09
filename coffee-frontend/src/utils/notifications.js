@@ -1,8 +1,5 @@
-const pushServerPublicKey = "BIN2Jc5Vmkmy-S3AUrcMlpKxJpLeVRAfu9WBqUbJ70SJOCWGCGXKY-Xzyh7HDr6KbRDGYHjqZ06OcS3BjD7uAm8";
+const pushServerPublicKey = "BLy5nZ2IRcNLzHEvXIpPLh0o5lVb68d0NxlWzdFgQNoTeSWT1wJaPzF5Z87tLWV-IRvX9VLTystq08a1sVUCLjE";
 
-const realServerKey = "secret"
-
-const serverID = "818502373485"
 function isPushNotificationSupported() {
     return "serviceWorker" in navigator && "PushManager" in window;
   }
