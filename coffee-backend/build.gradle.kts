@@ -26,6 +26,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.security:spring-security-oauth2-client")
 	implementation("io.jsonwebtoken:jjwt:0.5.1")
 	implementation("com.h2database:h2")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -40,9 +41,7 @@ dependencies {
 	implementation("com.github.kittinunf.fuel:fuel-json:2.2.1") //Core package
 	implementation("com.github.kittinunf.fuel:fuel-gson:2.2.1") //Fuel Gson
 	implementation("com.google.code.gson:gson:2.8.5") //Gson
-	implementation("com.google.firebase:firebase-admin:6.11.0") // Firebase login
-	implementation("org.projectlombok:lombok") // I don´t really understand what this isu sed for even
-    implementation("org.springframework.security:spring-security-oauth2-client")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
