@@ -7,7 +7,6 @@ import chat.letscoffee.security.oauth2.user.OAuth2UserInfo
 import chat.letscoffee.security.oauth2.user.OAuth2UserInfoFactory
 import chat.letscoffee.security.repository.UserRepository
 import chat.letscoffee.security.security.UserPrincipal
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
@@ -18,9 +17,7 @@ import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 
 @Service
-class CustomOAuth2UserService : DefaultOAuth2UserService() {
-    @Autowired
-    private val userRepository: UserRepository? = null
+class CustomOAuth2UserService( private val userRepository: UserRepository) : DefaultOAuth2UserService() {
 
     @Throws(OAuth2AuthenticationException::class)
     override fun loadUser(oAuth2UserRequest: OAuth2UserRequest): OAuth2User {

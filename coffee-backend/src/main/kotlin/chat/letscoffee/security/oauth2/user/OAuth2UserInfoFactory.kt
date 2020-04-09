@@ -11,8 +11,6 @@ class OAuth2UserInfoFactory {
                 GoogleOAuth2UserInfo(attributes)
             } else if (registrationId.equals(AuthProvider.facebook.toString(), ignoreCase = true)) {
                 FacebookOAuth2UserInfo(attributes)
-            } else if (registrationId.equals(AuthProvider.github.toString(), ignoreCase = true)) {
-                GithubOAuth2UserInfo(attributes)
             } else {
                 throw OAuth2AuthenticationProcessingException("Sorry! Login with $registrationId is not supported yet.")
             }

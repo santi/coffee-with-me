@@ -1,5 +1,5 @@
 package chat.letscoffee.security.model
 
 enum class AuthProvider {
-    local, facebook, google, github
+    local, facebook, google
 }
