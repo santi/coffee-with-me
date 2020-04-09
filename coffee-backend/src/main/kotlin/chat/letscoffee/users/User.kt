@@ -33,6 +33,5 @@ data class User(
 ) {
 
         @Id
-        @GeneratedValue
-        var id: Long? = null
+        var uid: String? = null
 }
