@@ -13,11 +13,8 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class TokenAuthenticationFilter : OncePerRequestFilter() {
-    @Autowired
-    private val tokenProvider: TokenProvider? = null
-    @Autowired
-    private val customUserDetailsService: CustomUserDetailsService? = null
+class TokenAuthenticationFilter(private val tokenProvider: TokenProvider, private val customUserDetailsService: CustomUserDetailsService) : OncePerRequestFilter() {
+
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {

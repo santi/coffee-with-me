@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class OAuth2AuthenticationSuccessHandler @Autowired internal constructor(private val tokenProvider: TokenProvider, private val appProperties: AppProperties,
+class OAuth2AuthenticationSuccessHandler (private val tokenProvider: TokenProvider, private val appProperties: AppProperties,
                                                                          private val httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository) : SimpleUrlAuthenticationSuccessHandler() {
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationSuccess(request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication) {

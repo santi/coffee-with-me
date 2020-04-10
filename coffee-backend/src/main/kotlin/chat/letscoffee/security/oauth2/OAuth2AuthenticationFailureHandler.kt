@@ -13,19 +13,17 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class OAuth2AuthenticationFailureHandler : SimpleUrlAuthenticationFailureHandler() {
-    @Autowired
-    var httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository? = null
+class OAuth2AuthenticationFailureHandler(private val httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository) : SimpleUrlAuthenticationFailureHandler() {
 
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationFailure(request: HttpServletRequest, response: HttpServletResponse, exception: AuthenticationException) {
-        var targetUrl = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.Companion.REDIRECT_URI_PARAM_COOKIE_NAME)
+        var targetUrl = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map { obj: Cookie -> obj.value }
                 .orElse("/")
         targetUrl = UriComponentsBuilder.fromUriString(targetUrl!!)
                 .queryParam("error", exception.localizedMessage)
                 .build().toUriString()
-        httpCookieOAuth2AuthorizationRequestRepository!!.removeAuthorizationRequestCookies(request, response)
+        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response)
         redirectStrategy.sendRedirect(request, response, targetUrl)
     }
 }

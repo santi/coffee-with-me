@@ -1,6 +1,6 @@
 package chat.letscoffee.security.oauth2.user
 
-class GoogleOAuth2UserInfo(attributes: Map<String?, Any?>?) : OAuth2UserInfo(attributes) {
+class GoogleOAuth2UserInfo(attributes: Map<String, String>) : OAuth2UserInfo(attributes) {
     override val id: String?
         get() = attributes!!["sub"] as String?
 

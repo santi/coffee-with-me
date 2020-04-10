@@ -1,5 +1,6 @@
 package chat.letscoffee.util
 
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
 import org.springframework.util.SerializationUtils
 import java.util.*
 import javax.servlet.http.Cookie
@@ -11,13 +12,11 @@ class CookieUtils {
     companion object {
         fun getCookie(request: HttpServletRequest, name: String): Optional<Cookie> {
             val cookies = request.cookies
-            if (cookies != null && cookies.size > 0) {
                 for (cookie in cookies) {
                     if (cookie.name == name) {
                         return Optional.of(cookie)
                     }
                 }
-            }
             return Optional.empty()
         }
 
@@ -43,9 +42,9 @@ class CookieUtils {
             }
         }
 
-        fun serialize(`object`: Any?): String {
+        fun serialize(request: OAuth2AuthorizationRequest?): String {
             return Base64.getUrlEncoder()
-                    .encodeToString(SerializationUtils.serialize(`object`))
+                    .encodeToString(SerializationUtils.serialize(request))
         }
 
         fun <T> deserialize(cookie: Cookie, cls: Class<T>): T {

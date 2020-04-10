@@ -9,6 +9,7 @@ import java.util.*
 
 @Service
 class TokenProvider(private val appProperties: AppProperties) {
+
     fun createToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserPrincipal
         val now = Date()

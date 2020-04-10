@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.core.user.OAuth2User
 
 class UserPrincipal(val id: Long?, val email: String, private val password: String?, private val authorities: Collection<GrantedAuthority>) : OAuth2User, UserDetails {
-    private var attributes: Map<String, Any>? = null
+    private var attributes: Map<String, String> = emptyMap()
 
     override fun getPassword(): String? {
         return password
@@ -38,10 +38,10 @@ class UserPrincipal(val id: Long?, val email: String, private val password: Stri
     }
 
     override fun getAttributes(): Map<String, Any> {
-        return attributes!!
+        return attributes
     }
 
-    fun setAttributes(attributes: Map<String, Any>?) {
+    fun setAttributes(attributes: Map<String, String>) {
         this.attributes = attributes
     }
 
@@ -53,14 +53,14 @@ class UserPrincipal(val id: Long?, val email: String, private val password: Stri
         fun create(user: User): UserPrincipal {
             val authorities: List<GrantedAuthority> = listOf(SimpleGrantedAuthority("ROLE_USER"))
             return UserPrincipal(
-                    user.id,
+                    user.id!!,
                     user.email!!,
                     user.password,
                     authorities
             )
         }
 
-        fun create(user: User, attributes: Map<String, Any>?): UserPrincipal {
+        fun create(user: User, attributes: Map<String, String>): UserPrincipal {
             val userPrincipal = create(user)
             userPrincipal.setAttributes(attributes)
             return userPrincipal
