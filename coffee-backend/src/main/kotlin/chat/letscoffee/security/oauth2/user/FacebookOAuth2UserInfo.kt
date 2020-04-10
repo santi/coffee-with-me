@@ -1,6 +1,6 @@
 package chat.letscoffee.security.oauth2.user
 
-class FacebookOAuth2UserInfo(attributes: Map<String, String>) : OAuth2UserInfo(attributes) {
+class FacebookOAuth2UserInfo(attributes: Map<String, Any>) : OAuth2UserInfo(attributes) {
     override val id: String?
         get() = attributes!!["id"] as String?
 

@@ -20,10 +20,10 @@ class TokenAuthenticationFilter(private val tokenProvider: TokenProvider, privat
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         try {
             val jwt = getJwtFromRequest(request)
-            if (StringUtils.hasText(jwt) && tokenProvider!!.validateToken(jwt)) {
+            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 val userId = tokenProvider.getUserIdFromToken(jwt)
-                val userDetails = customUserDetailsService!!.loadUserById(userId)
-                val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails!!.authorities)
+                val userDetails = customUserDetailsService.loadUserById(userId)
+                val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
                 authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authentication
             }

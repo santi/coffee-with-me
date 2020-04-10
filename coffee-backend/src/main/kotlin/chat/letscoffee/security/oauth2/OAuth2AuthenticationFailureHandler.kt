@@ -20,7 +20,7 @@ class OAuth2AuthenticationFailureHandler(private val httpCookieOAuth2Authorizati
         var targetUrl = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map { obj: Cookie -> obj.value }
                 .orElse("/")
-        targetUrl = UriComponentsBuilder.fromUriString(targetUrl!!)
+        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("error", exception.localizedMessage)
                 .build().toUriString()
         httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response)

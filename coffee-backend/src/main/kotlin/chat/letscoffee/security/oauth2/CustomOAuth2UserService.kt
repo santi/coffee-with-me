@@ -36,7 +36,7 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
         if (StringUtils.isEmpty(oAuth2UserInfo.email)) {
             throw OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider")
         }
-        val userOptional = userRepository!!.findByEmail(oAuth2UserInfo.email)
+        val userOptional = userRepository.findByEmail(oAuth2UserInfo.email)
         var user: User
         if (userOptional.isPresent) {
             user = userOptional.get()
@@ -59,12 +59,12 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
         user.name = oAuth2UserInfo.name
         user.email = oAuth2UserInfo.email
         user.imageUrl = oAuth2UserInfo.imageUrl
-        return userRepository!!.save(user)
+        return userRepository.save(user)
     }
 
     private fun updateExistingUser(existingUser: User, oAuth2UserInfo: OAuth2UserInfo): User {
         existingUser.name = oAuth2UserInfo.name
         existingUser.imageUrl = oAuth2UserInfo.imageUrl
-        return userRepository!!.save(existingUser)
+        return userRepository.save(existingUser)
     }
 }
