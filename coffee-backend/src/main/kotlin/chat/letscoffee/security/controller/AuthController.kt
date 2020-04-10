@@ -29,7 +29,7 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
 ,private val tokenProvider: TokenProvider ) {
 
     @PostMapping("/login")
-    fun authenticateUser(@RequestBody loginRequest: @Valid LoginRequest): ResponseEntity<*> {
+    fun authenticateUser(@RequestBody loginRequest: @Valid LoginRequest): ResponseEntity<AuthResponse> {
         val authentication = authenticationManager!!.authenticate(
                 UsernamePasswordAuthenticationToken(
                         loginRequest.email,
@@ -38,11 +38,11 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
         )
         SecurityContextHolder.getContext().authentication = authentication
         val token: String = tokenProvider.createToken(authentication)
-        return ResponseEntity.ok<Any>(AuthResponse(token))
+        return ResponseEntity.ok(AuthResponse(token))
     }
 
     @PostMapping("/signup")
-    fun registerUser(@RequestBody signUpRequest: @Valid SignUpRequest): ResponseEntity<*> {
+    fun registerUser(@RequestBody signUpRequest: @Valid SignUpRequest): ResponseEntity<ApiResponse> {
         if (userRepository.existsByEmail(signUpRequest.email)) {
             throw BadRequestException("Email address already in use.")
         }
@@ -58,6 +58,6 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
                 .fromCurrentContextPath().path("/user/me")
                 .buildAndExpand(result.id).toUri()
         return ResponseEntity.created(location)
-                .body<Any>(ApiResponse(true, "User registered successfully"))
+                .body(ApiResponse(true, "User registered successfully"))
     }
 }
