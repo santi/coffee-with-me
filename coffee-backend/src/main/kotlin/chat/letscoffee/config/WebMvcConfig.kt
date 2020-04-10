@@ -9,7 +9,7 @@ class WebMvcConfig : WebMvcConfigurer {
     private val MAX_AGE_SECS: Long = 3600
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins("localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
