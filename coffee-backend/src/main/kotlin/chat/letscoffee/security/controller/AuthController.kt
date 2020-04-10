@@ -51,7 +51,7 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
         user.name = signUpRequest.name
         user.email = signUpRequest.email
         user.password = signUpRequest.password
-        user.provider = AuthProvider.local
+        user.provider = AuthProvider.LOCAL
         user.password = passwordEncoder!!.encode(user.password)
         val result: User = userRepository.save(user)
         val location = ServletUriComponentsBuilder
