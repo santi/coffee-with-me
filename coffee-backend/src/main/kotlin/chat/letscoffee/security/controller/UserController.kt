@@ -19,4 +19,11 @@ class UserController(private val userRepository: UserRepository) {
     fun getCurrentUser(@CurrentUser userPrincipal: UserPrincipal): User {
         return userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
     }
+
+    @GetMapping("/user/friends")
+    @PreAuthorize("hasRole('USER')")
+    fun getMyFriends(@CurrentUser userPrincipal: UserPrincipal): Set<User> {
+        val user: User =  userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
+        return user.friends;
+    }
 }
