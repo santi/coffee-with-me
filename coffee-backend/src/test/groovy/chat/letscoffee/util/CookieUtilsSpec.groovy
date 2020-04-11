@@ -45,7 +45,7 @@ class CookieUtilsSpec extends Specification {
     }
 
     def "getting a cookie that does not exist should return null"() {
-        given: "a request with two cookies"
+        given: "a request with a cookie"
         def cookie1 = Mock(Cookie) {
             getName() >> "cookie1"
         }
@@ -97,7 +97,7 @@ class CookieUtilsSpec extends Specification {
         requestCookie.value == null
         requestCookie.maxAge == 0
 
-        and: "the cookie in the response should be reset"
+        and: "a reset cookie should be set on the response"
         def responseCookie = response.cookies.first()
         responseCookie.name == "cookie"
         responseCookie.value == null
