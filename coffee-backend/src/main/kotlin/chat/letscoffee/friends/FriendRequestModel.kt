@@ -6,16 +6,18 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "friendrequest")
-class FriendRequestModel() {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+class FriendRequestModel(
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Long? = null,
+        @ManyToOne
+        val from: User,
+        @ManyToOne
+        val to: User,
+        @Column
+        var accepted: Boolean? = null) {
 
-    @ManyToOne
-    var from: User? = null
-    @ManyToOne
-    var to: User? = null
 
-    @Column
-    var accepted: Boolean? = null
+
+
 }

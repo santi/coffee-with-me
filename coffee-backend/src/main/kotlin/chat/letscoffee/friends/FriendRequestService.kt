@@ -17,9 +17,8 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
         if (repository.existsByFromAndTo(from, touser)) {
             throw BadRequestException("A request between these users already exists")
         }
-        val request: FriendRequestModel = FriendRequestModel()
-        request.from = from
-        request.to = touser
+        val request = FriendRequestModel(from=from, to=touser)
+
         return repository.save(request)
     }
 
@@ -33,8 +32,8 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
     }
 
     fun deleteRequest(from: User, id: Long): Boolean {
-        val request: FriendRequestModel? = repository.findById(id).orElseThrow{ResourceNotFoundException("FriendRequest", "id", id)} ;
-        if (from != request!!.from) {
+        val request: FriendRequestModel = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id) ;
+        if (from != request.from) {
             return false;
         }
         repository.deleteById(id);
