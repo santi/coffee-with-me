@@ -47,14 +47,16 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
             return false;
         }
         request.accepted = true;
-        // When accepting a request, must update the followers for each User
-        to.addFriend(request.from)
-
-        request.from.addFriend(to)
-
         repository.save(request)
+        val from = request.from
+        // When accepting a request, must update the followers for each User
+        to.addFriend(from)
+        from.addFriend(to)
+
+   //     request.from.addFriend(to)
+
         userRepository.save(to)
-        userRepository.save(request.from)
+ //       userRepository.save(request.from)
         return true;
     }
 
