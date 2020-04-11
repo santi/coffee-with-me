@@ -272,4 +272,5 @@ sketch
 
 
 /coffee-backend/src/main/resources/credentials/*
+/coffee-backend/src/main/resources/application.yaml
 
