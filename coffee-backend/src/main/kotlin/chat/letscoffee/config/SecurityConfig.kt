@@ -95,7 +95,7 @@ class SecurityConfig(private val customUserDetailsService: CustomUserDetailsServ
                         "/**/*.css",
                         "/**/*.js")
                 .permitAll()
-                .antMatchers("/auth/**", "/oauth2/**")
+                .antMatchers("/auth/**", "/oauth2/**", "/push/subscribe")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
