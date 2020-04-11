@@ -40,7 +40,7 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
         var user: User
         if (userOptional.isPresent) {
             user = userOptional.get()
-            if (user.provider != AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId)) {
+            if (user.provider != AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase())) {
                 throw OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
                         user.provider + " account. Please use your " + user.provider +
                         " account to login.")
@@ -54,7 +54,7 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
 
     private fun registerNewUser(oAuth2UserRequest: OAuth2UserRequest, oAuth2UserInfo: OAuth2UserInfo): User {
         val user = User()
-        user.provider = AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId)
+        user.provider = AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase())
         user.providerId = oAuth2UserInfo.id
         user.name = oAuth2UserInfo.name
         user.email = oAuth2UserInfo.email

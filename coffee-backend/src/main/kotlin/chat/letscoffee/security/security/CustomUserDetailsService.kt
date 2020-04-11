@@ -19,7 +19,7 @@ class CustomUserDetailsService(var userRepository: UserRepository) : UserDetails
     override fun loadUserByUsername(email: String): UserDetails {
         val user = userRepository.findByEmail(email)
                 .orElseThrow { UsernameNotFoundException("User not found with email : $email") }
-        return UserPrincipal.Companion.create(user)
+        return UserPrincipal.create(user)
     }
 
     @Transactional

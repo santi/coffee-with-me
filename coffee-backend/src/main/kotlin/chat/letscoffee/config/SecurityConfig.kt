@@ -7,7 +7,7 @@ import chat.letscoffee.security.oauth2.OAuth2AuthenticationSuccessHandler
 import chat.letscoffee.security.security.CustomUserDetailsService
 import chat.letscoffee.security.security.RestAuthenticationEntryPoint
 import chat.letscoffee.security.security.TokenAuthenticationFilter
-import org.springframework.beans.factory.annotation.Autowired
+import chat.letscoffee.security.security.TokenProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -25,21 +25,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
-class SecurityConfig : WebSecurityConfigurerAdapter() {
-    @Autowired
-    private val customUserDetailsService: CustomUserDetailsService? = null
-    @Autowired
-    private val customOAuth2UserService: CustomOAuth2UserService? = null
-    @Autowired
-    private val oAuth2AuthenticationSuccessHandler: OAuth2AuthenticationSuccessHandler? = null
-    @Autowired
-    private val oAuth2AuthenticationFailureHandler: OAuth2AuthenticationFailureHandler? = null
-    @Autowired
-    private val httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository? = null
+class SecurityConfig(private val customUserDetailsService: CustomUserDetailsService,
+                     private val oAuth2AuthenticationSuccessHandler: OAuth2AuthenticationSuccessHandler,
+                     private val customOAuth2UserService: CustomOAuth2UserService,
+                     private val oAuth2AuthenticationFailureHandler: OAuth2AuthenticationFailureHandler,
+                     private val tokenProvider: TokenProvider
+) : WebSecurityConfigurerAdapter() {
+
 
     @Bean
     fun tokenAuthenticationFilter(): TokenAuthenticationFilter {
-        return TokenAuthenticationFilter()
+        return TokenAuthenticationFilter(tokenProvider, customUserDetailsService )
     }
 
     /*
