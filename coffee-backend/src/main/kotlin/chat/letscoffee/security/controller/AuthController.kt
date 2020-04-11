@@ -3,13 +3,10 @@ package chat.letscoffee.security.controller
 import chat.letscoffee.exception.BadRequestException
 import chat.letscoffee.security.model.AuthProvider
 import chat.letscoffee.security.model.User
-import chat.letscoffee.payload.ApiResponse
-import chat.letscoffee.payload.AuthResponse
 import chat.letscoffee.payload.LoginRequest
 import chat.letscoffee.payload.SignUpRequest
 import chat.letscoffee.security.repository.UserRepository
 import chat.letscoffee.security.security.TokenProvider
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -29,7 +26,7 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
 ,private val tokenProvider: TokenProvider ) {
 
     @PostMapping("/login")
-    fun authenticateUser(@RequestBody loginRequest: @Valid LoginRequest): ResponseEntity<AuthResponse> {
+    fun authenticateUser(@RequestBody loginRequest: @Valid LoginRequest): ResponseEntity<String> {
         val authentication = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(
                         loginRequest.email,
@@ -38,11 +35,11 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
         )
         SecurityContextHolder.getContext().authentication = authentication
         val token: String = tokenProvider.createToken(authentication)
-        return ResponseEntity.ok(AuthResponse(token))
+        return ResponseEntity.ok(token)
     }
 
     @PostMapping("/signup")
-    fun registerUser(@RequestBody signUpRequest: @Valid SignUpRequest): ResponseEntity<ApiResponse> {
+    fun registerUser(@RequestBody signUpRequest: @Valid SignUpRequest): ResponseEntity<String> {
         if (userRepository.existsByEmail(signUpRequest.email)) {
             throw BadRequestException("Email address already in use.")
         }
@@ -57,6 +54,6 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
                 .fromCurrentContextPath().path("/user/me")
                 .buildAndExpand(result.id).toUri()
         return ResponseEntity.created(location)
-                .body(ApiResponse(true, "User registered successfully"))
+                .body("User registered successfully")
     }
 }
