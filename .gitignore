@@ -10,7 +10,6 @@
 HELP.md
 .gradle
 build/
-!gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
 
@@ -274,3 +273,5 @@ sketch
 /coffee-backend/src/main/resources/credentials/*
 /coffee-backend/src/main/resources/application.yaml
 
+# Include gradle wrapper for building on CI
+!gradle/wrapper/gradle-wrapper.jar
