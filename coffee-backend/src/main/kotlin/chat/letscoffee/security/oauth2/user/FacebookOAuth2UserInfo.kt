@@ -13,10 +13,10 @@ class FacebookOAuth2UserInfo(attributes: Map<String, Any>) : OAuth2UserInfo(attr
     override val imageUrl: String?
         get() {
             if (attributes.containsKey("picture")) {
-                val pictureObj = attributes!!["picture"] as Map<String, Any>
-                if (pictureObj!!.containsKey("data")) {
+                val pictureObj = attributes["picture"] as Map<String, Any>
+                if (pictureObj.containsKey("data")) {
                     val dataObj = pictureObj["data"] as Map<String, Any>
-                    if (dataObj!!.containsKey("url")) {
+                    if (dataObj.containsKey("url")) {
                         return dataObj["url"] as String
                     }
                 }
