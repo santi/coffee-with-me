@@ -39,11 +39,26 @@ class FriendRequestController(private val userRepository: UserRepository, privat
     }
 
 
-    @DeleteMapping("delete")
+    @DeleteMapping("/delete")
     @PreAuthorize("hasRole('USER')")
     fun deleteFriendRequest(@CurrentUser userPrincipal: UserPrincipal, @RequestParam("id") id: Long): ResponseEntity<String> {
         val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
         return if (service.deleteRequest(me, id))  ResponseEntity.ok("Request deleted") else ResponseEntity("Friend Request not found or not sent by you", HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping("/accept")
+    @PreAuthorize("hasRole('USER')")
+    fun acceptFriendRequest(@CurrentUser userPrincipal: UserPrincipal, @RequestParam("id") id: Long): ResponseEntity<String> {
+        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
+        return if (service.acceptRequest(me, id))  ResponseEntity.ok("Request accepted") else ResponseEntity("Friend Request not found or not sent by you", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/reject")
+    @PreAuthorize("hasRole('USER')")
+    fun rejectFriendRequest(@CurrentUser userPrincipal: UserPrincipal, @RequestParam("id") id: Long): ResponseEntity<String> {
+        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
+        return if (service.rejectRequest(me, id))  ResponseEntity.ok("Request rejected") else ResponseEntity("Friend Request not found or not sent by you", HttpStatus.NOT_FOUND);
+    }
+
 
 }
