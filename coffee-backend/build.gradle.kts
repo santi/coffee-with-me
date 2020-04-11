@@ -4,8 +4,8 @@ plugins {
 	id("org.springframework.boot")
 	kotlin("jvm")
 	kotlin("plugin.spring")
-	id("org.jetbrains.kotlin.plugin.jpa") version "1.3.71"
-
+	id("org.jetbrains.kotlin.plugin.jpa")
+	groovy
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_11
@@ -47,8 +47,6 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
+	testImplementation("org.codehaus.groovy:groovy-all:2.5.7")
+	testImplementation("org.spockframework:spock-core:1.3-groovy-2.5")
 }
