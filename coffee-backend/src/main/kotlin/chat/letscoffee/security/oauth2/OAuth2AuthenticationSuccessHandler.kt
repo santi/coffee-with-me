@@ -2,9 +2,9 @@ package chat.letscoffee.security.oauth2
 
 import chat.letscoffee.config.AppProperties
 import chat.letscoffee.exception.BadRequestException
+import chat.letscoffee.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.Companion.REDIRECT_URI_PARAM_COOKIE_NAME
 import chat.letscoffee.security.security.TokenProvider
 import chat.letscoffee.util.CookieUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.stereotype.Component
@@ -17,8 +17,12 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class OAuth2AuthenticationSuccessHandler (private val tokenProvider: TokenProvider, private val appProperties: AppProperties,
-                                                                         private val httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository) : SimpleUrlAuthenticationSuccessHandler() {
+class OAuth2AuthenticationSuccessHandler (
+    private val tokenProvider: TokenProvider,
+    private val appProperties: AppProperties,
+    private val httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository
+) : SimpleUrlAuthenticationSuccessHandler() {
+
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationSuccess(request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication) {
         val targetUrl = determineTargetUrl(request, response, authentication)
@@ -31,12 +35,11 @@ class OAuth2AuthenticationSuccessHandler (private val tokenProvider: TokenProvid
     }
 
     override fun determineTargetUrl(request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication): String {
-        val redirectUri = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.Companion.REDIRECT_URI_PARAM_COOKIE_NAME)
-                .map { obj: Cookie -> obj.value }
-        if (redirectUri.isPresent && !isAuthorizedRedirectUri(redirectUri.get())) {
+        val redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)?.value
+        if (redirectUri != null && !isAuthorizedRedirectUri(redirectUri)) {
             throw BadRequestException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication")
         }
-        val targetUrl = redirectUri.orElse(defaultTargetUrl)
+        val targetUrl = redirectUri ?: defaultTargetUrl
         val token = tokenProvider.createToken(authentication)
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", token)

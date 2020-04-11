@@ -10,35 +10,28 @@ import javax.servlet.http.HttpServletResponse
 class CookieUtils {
 
     companion object {
-        fun getCookie(request: HttpServletRequest, name: String): Optional<Cookie> {
-            val cookies = request.cookies
-                for (cookie in cookies) {
-                    if (cookie.name == name) {
-                        return Optional.of(cookie)
-                    }
-                }
-            return Optional.empty()
+        fun getCookie(request: HttpServletRequest, name: String): Cookie? {
+            return request.cookies?.firstOrNull { it.name == name }
         }
 
-        fun addCookie(response: HttpServletResponse, name: String?, value: String?, maxAge: Int) {
+        fun addCookie(response: HttpServletResponse, name: String, value: String, maxAge: Int) {
             val cookie = Cookie(name, value)
             cookie.path = "/"
             cookie.isHttpOnly = true
             cookie.maxAge = maxAge
+            // TODO: uncomment secure and httpOnly in production
+            //cookie.secure = true
+            //cookie.isHttpOnly = true
             response.addCookie(cookie)
         }
 
         fun deleteCookie(request: HttpServletRequest, response: HttpServletResponse, name: String) {
-            val cookies = request.cookies
-            if (cookies != null && cookies.size > 0) {
-                for (cookie in cookies) {
-                    if (cookie.name == name) {
-                        cookie.value = ""
-                        cookie.path = "/"
-                        cookie.maxAge = 0
-                        response.addCookie(cookie)
-                    }
-                }
+            val cookie = request.cookies?.firstOrNull{ it.name == name }
+            if (cookie != null) {
+                cookie.value = null
+                cookie.path = "/"
+                cookie.maxAge = 0
+                response.addCookie(cookie)
             }
         }
 
