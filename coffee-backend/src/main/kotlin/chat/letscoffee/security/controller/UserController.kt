@@ -17,6 +17,6 @@ class UserController(private val userRepository: UserRepository) {
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     fun getCurrentUser(@CurrentUser userPrincipal: UserPrincipal): User {
-        return userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
+        return userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
     }
 }
