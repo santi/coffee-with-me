@@ -10,7 +10,7 @@ import javax.validation.constraints.Email
 
 @ToString(exclude = arrayOf("friends"))
 @EqualsAndHashCode(exclude = arrayOf("friends"))
-@NamedEntityGraph(name="graph.Person.friends",
+@NamedEntityGraph(name="graph.Person.friends", // Creating a graph to help hibernate to create a query with outer join.
         attributeNodes = arrayOf(NamedAttributeNode("friends")))
 @Entity
 @Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("email"))])
