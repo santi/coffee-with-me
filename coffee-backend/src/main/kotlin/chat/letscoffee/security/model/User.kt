@@ -1,13 +1,20 @@
 package chat.letscoffee.security.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import lombok.EqualsAndHashCode
+import lombok.ToString
 import javax.persistence.*
 import javax.validation.constraints.Email
 
 
+@ToString(exclude = arrayOf("friends"))
+@EqualsAndHashCode(exclude = arrayOf("friends"))
+@NamedEntityGraph(name="graph.Person.friends",
+        attributeNodes = arrayOf(NamedAttributeNode("friends")))
 @Entity
 @Table(name = "users", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("email"))])
-data class User(
+class User(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long? = null,
@@ -35,6 +42,8 @@ data class User(
 
 
 )
+
+
 
 {
         fun addFriend(user: User) {
