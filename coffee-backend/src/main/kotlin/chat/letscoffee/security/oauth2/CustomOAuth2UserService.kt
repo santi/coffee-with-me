@@ -37,6 +37,7 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
             throw OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider")
         }
         val userOptional = userRepository.findByEmail(oAuth2UserInfo.email)
+        // TODO: Check that it's not possible to spoof an email. Gotta be secure
         var user: User
         if (userOptional.isPresent) {
             user = userOptional.get()
@@ -53,12 +54,12 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
     }
 
     private fun registerNewUser(oAuth2UserRequest: OAuth2UserRequest, oAuth2UserInfo: OAuth2UserInfo): User {
-        val user = User()
-        user.provider = AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase())
-        user.providerId = oAuth2UserInfo.id
-        user.name = oAuth2UserInfo.name
-        user.email = oAuth2UserInfo.email
-        user.imageUrl = oAuth2UserInfo.imageUrl
+        val user = User(provider = AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase()),
+                        providerId = oAuth2UserInfo.id,
+                        name = oAuth2UserInfo.name,
+                        email = oAuth2UserInfo.email,
+                        imageUrl = oAuth2UserInfo.imageUrl)
+
         return userRepository.save(user)
     }
 

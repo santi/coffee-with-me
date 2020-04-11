@@ -30,7 +30,7 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
 
     @PostMapping("/login")
     fun authenticateUser(@RequestBody loginRequest: @Valid LoginRequest): ResponseEntity<AuthResponse> {
-        val authentication = authenticationManager!!.authenticate(
+        val authentication = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(
                         loginRequest.email,
                         loginRequest.password
@@ -47,12 +47,11 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
             throw BadRequestException("Email address already in use.")
         }
         // Creating user's account
-        val user = User()
-        user.name = signUpRequest.name
-        user.email = signUpRequest.email
-        user.password = signUpRequest.password
-        user.provider = AuthProvider.LOCAL
-        user.password = passwordEncoder!!.encode(user.password)
+        val user = User(name=signUpRequest.name,
+                        email=signUpRequest.email,
+                        provider = AuthProvider.LOCAL,
+                        password = passwordEncoder.encode(signUpRequest.password))
+
         val result: User = userRepository.save(user)
         val location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/user/me")

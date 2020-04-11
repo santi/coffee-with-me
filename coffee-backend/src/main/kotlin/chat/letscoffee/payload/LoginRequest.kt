@@ -4,8 +4,7 @@ import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
 
-class LoginRequest {
-    var email: @NotBlank @Email String? = null
-    var password: @NotBlank String? = null
-
-}
+data class LoginRequest (
+        val email: @NotBlank @Email String,
+        val password: @NotBlank String
+)

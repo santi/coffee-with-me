@@ -54,7 +54,7 @@ class UserPrincipal(val id: Long?, val email: String, private val password: Stri
             val authorities: List<GrantedAuthority> = listOf(SimpleGrantedAuthority("ROLE_USER"))
             return UserPrincipal(
                     user.id,
-                    user.email!!,
+                    user.email,
                     user.password,
                     authorities
             )
