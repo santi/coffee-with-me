@@ -43,7 +43,6 @@ dependencies {
 	implementation("com.google.code.gson:gson:2.8.5") //Gson
 
 	implementation("org.jetbrains.kotlin:kotlin-noarg")
-	implementation("org.projectlombok:lombok")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
