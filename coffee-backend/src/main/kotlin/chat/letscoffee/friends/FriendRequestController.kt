@@ -32,7 +32,7 @@ class FriendRequestController(private val userRepository: UserRepository, privat
         return service.getMySentFriendRequests(me)
     }
 
-    @PostMapping("/")
+    @PostMapping
     @PreAuthorize("hasRole('USER')")
     fun getMySentFriendRequests(@CurrentUser userPrincipal: UserPrincipal, @RequestBody friendRequest: FriendRequestPost): FriendRequestModel {
         val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
@@ -42,7 +42,7 @@ class FriendRequestController(private val userRepository: UserRepository, privat
 
     @DeleteMapping("/{friendRequestId}")
     @PreAuthorize("hasRole('USER')")
-    fun deleteFriendRequest(@CurrentUser userPrincipal: UserPrincipal, @PathParam("friendRequestId") id: Long): ResponseEntity<String> {
+    fun deleteFriendRequest(@CurrentUser userPrincipal: UserPrincipal, @PathVariable("friendRequestId") id: Long): ResponseEntity<String> {
         val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
         return if (service.deleteRequest(me, id))  ResponseEntity.ok("Request deleted") else ResponseEntity("Friend Request not found or not sent by you", HttpStatus.NOT_FOUND);
     }
