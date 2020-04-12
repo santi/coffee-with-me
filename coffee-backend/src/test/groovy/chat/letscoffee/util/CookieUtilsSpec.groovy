@@ -8,18 +8,23 @@ import javax.servlet.http.Cookie
 
 class CookieUtilsSpec extends Specification {
 
+    MockHttpServletRequest request
+    MockHttpServletResponse response
+
+    Cookie cookie1
+    Cookie cookie2
+
+    def setup() {
+        request = new MockHttpServletRequest()
+        response = new MockHttpServletResponse()
+
+        cookie1 = new Cookie("cookie1", "value1")
+        cookie2 = new Cookie("cookie2", "value2")
+    }
+
 
     def "getting a cookie from a request should return the correct cookie"() {
         given: "a request with two cookies"
-        def cookie1 = Mock(Cookie) {
-            getName() >> "cookie1"
-        }
-
-        def cookie2 = Mock(Cookie) {
-            getName() >> "cookie2"
-        }
-
-        def request = new MockHttpServletRequest()
         request.cookies =  [
             cookie1,
             cookie2
@@ -33,24 +38,18 @@ class CookieUtilsSpec extends Specification {
     }
 
     def "getting a cookie from a request with no cookies should return null"() {
-        given: "a request"
-        def request = new MockHttpServletRequest()
+        given: "a request with no cookies"
         request.cookies = []
 
         when: "getting a cookie"
         def cookie = CookieUtils.@Companion.getCookie(request, "cookie")
 
-        then: "the returned cookie should be null"
+        then: "it should return null"
         cookie == null
     }
 
     def "getting a cookie that does not exist should return null"() {
         given: "a request with a cookie"
-        def cookie1 = Mock(Cookie) {
-            getName() >> "cookie1"
-        }
-
-        def request = new MockHttpServletRequest()
         request.cookies =  [
             cookie1,
         ]
@@ -63,10 +62,7 @@ class CookieUtilsSpec extends Specification {
     }
 
     def "adding a cookie should make it available on the response object"() {
-        given: "a response object"
-        def response = new MockHttpServletResponse()
-
-        when: "adding a cookie"
+        when: "adding a cookie to a response"
         CookieUtils.@Companion.addCookie(response, "cookie", "value", 3600)
 
         then: "the cookie should be available on the response object"
@@ -77,29 +73,25 @@ class CookieUtilsSpec extends Specification {
     }
 
     def "deleting a cookie should remove it from the request and set an empty cookie in the response"() {
-        given: "a request and a response"
-        def request = new MockHttpServletRequest()
-        def response = new MockHttpServletResponse()
 
-        and: "a cookie on the request"
-        def cookie = new Cookie("cookie", "value")
-        cookie.maxAge = 123
+        given: "a request with a cookie"
+        cookie1.maxAge = 123
         request.cookies = [
-            cookie
+            cookie1
         ]
 
         when: "deleting the cookie"
-        CookieUtils.@Companion.deleteCookie(request, response, "cookie")
+        CookieUtils.@Companion.deleteCookie(request, response, "cookie1")
 
         then: "the cookie on the request should be reset"
         def requestCookie = request.cookies.first()
-        requestCookie.name == "cookie"
+        requestCookie.name == "cookie1"
         requestCookie.value == null
         requestCookie.maxAge == 0
 
         and: "a reset cookie should be set on the response"
         def responseCookie = response.cookies.first()
-        responseCookie.name == "cookie"
+        responseCookie.name == "cookie1"
         responseCookie.value == null
         responseCookie.maxAge == 0
     }
