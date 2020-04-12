@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 class FriendRequestService(private val repository: FriendRequestRepository, private val userRepository: UserRepository) {
 
     fun addFriendRequest(from: User, to: String): FriendRequestModel {
-        val touser: User = userRepository.findByNameOrEmail(to, to)?: throw ResourceNotFoundException("User", "username", to);
+        val touser: User = userRepository.findByEmail(to)?: throw ResourceNotFoundException("User", "mail", to);
         // Check if you already have an ongoing request to this user
 
         if (repository.existsByFromAndTo(from, touser)) {
