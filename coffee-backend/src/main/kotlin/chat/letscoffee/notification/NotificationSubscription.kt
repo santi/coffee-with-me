@@ -10,7 +10,7 @@ import java.security.PublicKey
 import java.security.spec.InvalidKeySpecException
 import java.util.Base64
 
-data class Subscription (
+data class NotificationSubscription (
     var endpoint: String,
     val auth: String,
     val key: String

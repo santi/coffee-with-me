@@ -2,10 +2,10 @@ package chat.letscoffee.security.oauth2
 
 import chat.letscoffee.exception.OAuth2AuthenticationProcessingException
 import chat.letscoffee.security.model.AuthProvider
-import chat.letscoffee.security.model.User
+import chat.letscoffee.user.User
 import chat.letscoffee.security.oauth2.user.OAuth2UserInfo
 import chat.letscoffee.security.oauth2.user.OAuth2UserInfoFactory
-import chat.letscoffee.security.repository.UserRepository
+import chat.letscoffee.user.UserRepository
 import chat.letscoffee.security.security.UserPrincipal
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.core.AuthenticationException
@@ -55,10 +55,10 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
 
     private fun registerNewUser(oAuth2UserRequest: OAuth2UserRequest, oAuth2UserInfo: OAuth2UserInfo): User {
         val user = User(provider = AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase()),
-                        providerId = oAuth2UserInfo.id,
-                        name = oAuth2UserInfo.name,
-                        email = oAuth2UserInfo.email,
-                        imageUrl = oAuth2UserInfo.imageUrl)
+            providerId = oAuth2UserInfo.id,
+            name = oAuth2UserInfo.name,
+            email = oAuth2UserInfo.email,
+            imageUrl = oAuth2UserInfo.imageUrl)
 
         return userRepository.save(user)
     }

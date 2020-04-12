@@ -2,10 +2,10 @@ package chat.letscoffee.security.controller
 
 import chat.letscoffee.exception.BadRequestException
 import chat.letscoffee.security.model.AuthProvider
-import chat.letscoffee.security.model.User
+import chat.letscoffee.user.User
 import chat.letscoffee.payload.LoginRequest
 import chat.letscoffee.payload.SignUpRequest
-import chat.letscoffee.security.repository.UserRepository
+import chat.letscoffee.user.UserRepository
 import chat.letscoffee.security.security.TokenProvider
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -44,10 +44,10 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
             throw BadRequestException("Email address already in use.")
         }
         // Creating user's account
-        val user = User(name=signUpRequest.name,
-                        email=signUpRequest.email,
-                        provider = AuthProvider.LOCAL,
-                        password = passwordEncoder.encode(signUpRequest.password))
+        val user = User(name = signUpRequest.name,
+            email = signUpRequest.email,
+            provider = AuthProvider.LOCAL,
+            password = passwordEncoder.encode(signUpRequest.password))
 
         val result: User = userRepository.save(user)
         val location = ServletUriComponentsBuilder

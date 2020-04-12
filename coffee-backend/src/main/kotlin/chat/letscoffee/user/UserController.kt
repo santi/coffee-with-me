@@ -1,11 +1,8 @@
-package chat.letscoffee.security.controller
+package chat.letscoffee.user
 
 import chat.letscoffee.exception.ResourceNotFoundException
-import chat.letscoffee.security.model.User
-import chat.letscoffee.security.repository.UserRepository
 import chat.letscoffee.security.security.CurrentUser
 import chat.letscoffee.security.security.UserPrincipal
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,6 +21,6 @@ class UserController(private val userRepository: UserRepository) {
     @PreAuthorize("hasRole('USER')")
     fun getMyFriends(@CurrentUser userPrincipal: UserPrincipal): Set<User> {
         val user: User =  userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
-        return user.friends;
+        return user.friends
     }
 }

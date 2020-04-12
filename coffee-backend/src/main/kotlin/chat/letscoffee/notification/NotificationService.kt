@@ -6,11 +6,11 @@ import org.apache.http.HttpResponse
 import org.springframework.stereotype.Component
 
 @Component
-class PushNotificationService(
+class NotificationService(
     private val pushService: PushService
 ) {
 
-    fun sendPushNotification(sub: Subscription): HttpResponse {
+    fun sendPushNotification(sub: NotificationSubscription): HttpResponse {
 
         val notification = Notification.builder()
             .endpoint(sub.endpoint)
