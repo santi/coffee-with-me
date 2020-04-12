@@ -42,8 +42,8 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
     }
 
     fun acceptRequest(to: User, id: Long): Boolean {
-        val request: FriendRequestModel? = repository.findById(id).orElseThrow{ResourceNotFoundException("FriendRequest", "id", id)} ;
-        if (to != request!!.to) {
+        val request: FriendRequestModel = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id) ;
+        if (to != request.to) {
             return false;
         }
         request.accepted = true;
@@ -53,16 +53,14 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
         to.addFriend(from)
         from.addFriend(to)
 
-   //     request.from.addFriend(to)
 
         userRepository.save(to)
- //       userRepository.save(request.from)
         return true;
     }
 
     fun rejectRequest(to: User, id: Long): Boolean {
-        val request: FriendRequestModel? = repository.findById(id).orElseThrow{ResourceNotFoundException("FriendRequest", "id", id)} ;
-        if (to != request!!.to) {
+        val request: FriendRequestModel = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id);
+        if (to != request.to) {
             return false;
         }
         request.accepted = false;
