@@ -1,9 +1,10 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: root
-    password: test
+    url: url
+    username: secret
+    password: secret
+    platform: postgres
+    driver-class-name: org.postgresql.Driver
 
 
   jpa:
@@ -11,9 +12,7 @@ spring:
     hibernate:
       ddl-auto: update
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   security:
     oauth2:
       client:
