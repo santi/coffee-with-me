@@ -10,9 +10,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import javax.websocket.server.PathParam
 
 @RestController
-@RequestMapping("/friendrequest")
+@RequestMapping("/friends/requests")
 class FriendRequestController(private val userRepository: UserRepository, private val service: FriendRequestService) {
 
     data class FriendRequestPost(val to: String, val workaround: String?);
@@ -20,29 +21,29 @@ class FriendRequestController(private val userRepository: UserRepository, privat
 
     @GetMapping("/toMe")
     @PreAuthorize("hasRole('USER')")
-    fun getMyFriendRequests(@CurrentUser userPrincipal: UserPrincipal): List<FriendRequestModel> {
-        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
+    fun getRequestsTo(@CurrentUser userPrincipal: UserPrincipal): List<FriendRequestModel> {
+        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
         return service.getMyFriendRequests(me)
     }
     @GetMapping("/fromMe")
     @PreAuthorize("hasRole('USER')")
-    fun getMySentFriendRequests(@CurrentUser userPrincipal: UserPrincipal): List<FriendRequestModel> {
-        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
+    fun getRequestsFrom(@CurrentUser userPrincipal: UserPrincipal): List<FriendRequestModel> {
+        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
         return service.getMySentFriendRequests(me)
     }
 
-    @PostMapping("/create")
+    @PostMapping("/")
     @PreAuthorize("hasRole('USER')")
     fun getMySentFriendRequests(@CurrentUser userPrincipal: UserPrincipal, @RequestBody friendRequest: FriendRequestPost): FriendRequestModel {
-        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
+        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
         return service.addFriendRequest(me, friendRequest.to);
     }
 
 
-    @DeleteMapping("delete")
+    @DeleteMapping("/{friendRequestId}")
     @PreAuthorize("hasRole('USER')")
-    fun deleteFriendRequest(@CurrentUser userPrincipal: UserPrincipal, @RequestParam("id") id: Long): ResponseEntity<String> {
-        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id!!)
+    fun deleteFriendRequest(@CurrentUser userPrincipal: UserPrincipal, @PathParam("friendRequestId") id: Long): ResponseEntity<String> {
+        val me: User = userRepository.findByIdOrNull(userPrincipal.id)?: throw ResourceNotFoundException("User", "id", userPrincipal.id)
         return if (service.deleteRequest(me, id))  ResponseEntity.ok("Request deleted") else ResponseEntity("Friend Request not found or not sent by you", HttpStatus.NOT_FOUND);
     }
 

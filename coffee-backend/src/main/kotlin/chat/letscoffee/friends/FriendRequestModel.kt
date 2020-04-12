@@ -5,7 +5,7 @@ import javax.persistence.*
 
 
 @Entity
-@Table(name = "friendrequest")
+@Table(name = "friend_request")
 class FriendRequestModel(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
