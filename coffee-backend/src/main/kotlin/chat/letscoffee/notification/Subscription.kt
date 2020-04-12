@@ -27,7 +27,6 @@ data class Subscription (
     /**
      * Returns the base64 encoded public key as a PublicKey object
      */
-    @get:Throws(InvalidKeySpecException::class)
     val userPublicKey: PublicKey
         get() {
             val point: ECPoint = ecSpec.curve.decodePoint(keyAsBytes)
