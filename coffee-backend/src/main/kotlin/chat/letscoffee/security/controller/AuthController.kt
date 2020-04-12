@@ -1,12 +1,12 @@
 package chat.letscoffee.security.controller
 
 import chat.letscoffee.exception.BadRequestException
-import chat.letscoffee.security.model.AuthProvider
-import chat.letscoffee.user.User
 import chat.letscoffee.payload.LoginRequest
 import chat.letscoffee.payload.SignUpRequest
-import chat.letscoffee.user.UserRepository
+import chat.letscoffee.security.model.AuthProvider
 import chat.letscoffee.security.security.TokenProvider
+import chat.letscoffee.user.User
+import chat.letscoffee.user.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -21,9 +21,12 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/auth")
-class AuthController(private val authenticationManager: AuthenticationManager, private val userRepository: UserRepository
-, private val passwordEncoder: PasswordEncoder
-,private val tokenProvider: TokenProvider ) {
+class AuthController(
+    private val authenticationManager: AuthenticationManager,
+    private val userService: UserService,
+    private val passwordEncoder: PasswordEncoder,
+    private val tokenProvider: TokenProvider
+) {
 
     @PostMapping("/login")
     fun authenticateUser(@RequestBody loginRequest: @Valid LoginRequest): ResponseEntity<String> {
@@ -40,16 +43,18 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
 
     @PostMapping("/signup")
     fun registerUser(@RequestBody signUpRequest: @Valid SignUpRequest): ResponseEntity<String> {
-        if (userRepository.existsByEmail(signUpRequest.email)) {
+        if (userService.existsByEmail(signUpRequest.email)) {
             throw BadRequestException("Email address already in use.")
         }
-        // Creating user's account
-        val user = User(name = signUpRequest.name,
+
+        val user = User(
+            name = signUpRequest.name,
             email = signUpRequest.email,
             provider = AuthProvider.LOCAL,
-            password = passwordEncoder.encode(signUpRequest.password))
+            password = passwordEncoder.encode(signUpRequest.password)
+        )
 
-        val result: User = userRepository.save(user)
+        val result: User = userService.create(user)
         val location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/user/me")
                 .buildAndExpand(result.id).toUri()

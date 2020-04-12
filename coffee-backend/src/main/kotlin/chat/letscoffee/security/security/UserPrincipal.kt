@@ -6,7 +6,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.core.user.OAuth2User
 
-class UserPrincipal(val id: Long?, val email: String, private val password: String?, private val authorities: Collection<GrantedAuthority>) : OAuth2User, UserDetails {
+class UserPrincipal(
+    val id: Long,
+    val email: String,
+    private val password: String?,
+    private val authorities: Collection<GrantedAuthority>
+) : OAuth2User, UserDetails {
+
     private var attributes: Map<String, Any> = emptyMap()
 
     override fun getPassword(): String? {
@@ -52,11 +58,13 @@ class UserPrincipal(val id: Long?, val email: String, private val password: Stri
     companion object {
         fun create(user: User): UserPrincipal {
             val authorities: List<GrantedAuthority> = listOf(SimpleGrantedAuthority("ROLE_USER"))
+            val userId = user.id
+                ?: throw IllegalStateException("Tried to create UserPrincipal for non-persisted user. Users must have an account to be given access rights")
             return UserPrincipal(
-                    user.id,
-                    user.email,
-                    user.password,
-                    authorities
+                userId,
+                user.email,
+                user.password,
+                authorities
             )
         }
 

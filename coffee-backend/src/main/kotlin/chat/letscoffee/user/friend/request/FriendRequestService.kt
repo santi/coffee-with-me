@@ -3,50 +3,47 @@ package chat.letscoffee.user.friend.request
 import chat.letscoffee.exception.BadRequestException
 import chat.letscoffee.exception.ResourceNotFoundException
 import chat.letscoffee.user.User
-import chat.letscoffee.user.UserRepository
+import chat.letscoffee.user.UserService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class FriendRequestService(private val repository: FriendRequestRepository, private val userRepository: UserRepository) {
+class FriendRequestService(private val repository: FriendRequestRepository, private val userService: UserService) {
 
-    fun addFriendRequest(from: User, to: String): FriendRequest {
-        val touser: User = userRepository.findByEmail(to)?: throw ResourceNotFoundException("User", "mail", to);
-        // Check if you already have an ongoing request to this user
-
-        if (repository.existsByFromAndTo(from, touser)) {
+    fun addFriendRequest(from: User, to: User): FriendRequest {
+        if (repository.existsByFromAndTo(from, to)) {
             throw BadRequestException("A request between these users already exists")
         }
-        val request = FriendRequest(from = from, to = touser)
+        val request = FriendRequest(from = from, to = to)
 
         return repository.save(request)
     }
 
-    fun getMyFriendRequests(to: User): List<FriendRequest> {
-        return repository.findByToAndAcceptedIsNull(to);
+    fun getRequestsTo(to: User): List<FriendRequest> {
+        return repository.findByToAndAcceptedIsNull(to)
     }
 
 
-    fun getMySentFriendRequests(from: User): List<FriendRequest> {
-        return repository.findByFromAndAcceptedIsNull(from);
+    fun getRequestsFrom(from: User): List<FriendRequest> {
+        return repository.findByFromAndAcceptedIsNull(from)
     }
 
     fun deleteRequest(from: User, id: Long): Boolean {
-        val request: FriendRequest = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id) ;
+        val request: FriendRequest = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id)
         if (from != request.from) {
-            return false;
+            return false
         }
-        repository.deleteById(id);
+        repository.deleteById(id)
 
-        return true;
+        return true
     }
 
-    fun acceptRequest(to: User, id: Long): Boolean {
-        val request: FriendRequest = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id) ;
+    fun acceptRequest(to: User, id: Long) {
+        val request: FriendRequest = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id)
         if (to != request.to) {
-            return false;
+            throw ResourceNotFoundException("FriendRequest", "id", id)
         }
-        request.accepted = true;
+        request.accepted = true
         repository.save(request)
         val from = request.from
         // When accepting a request, must update the followers for each User
@@ -54,18 +51,16 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
         from.addFriend(to)
 
 
-        userRepository.save(to)
-        return true;
+        userService.update(to)
     }
 
-    fun rejectRequest(to: User, id: Long): Boolean {
-        val request: FriendRequest = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id);
+    fun rejectRequest(to: User, id: Long) {
+        val request: FriendRequest = repository.findByIdOrNull(id)?: throw ResourceNotFoundException("FriendRequest", "id", id)
         if (to != request.to) {
-            return false;
+            throw ResourceNotFoundException("FriendRequest", "id", id)
         }
-        request.accepted = false;
+        request.accepted = false
         repository.save(request)
-        return true;
     }
 
 }

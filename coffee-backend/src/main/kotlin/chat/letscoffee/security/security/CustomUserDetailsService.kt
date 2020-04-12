@@ -1,29 +1,25 @@
 package chat.letscoffee.security.security
 
-import chat.letscoffee.exception.ResourceNotFoundException
 import chat.letscoffee.user.User
-import chat.letscoffee.user.UserRepository
-import org.springframework.data.repository.findByIdOrNull
+import chat.letscoffee.user.UserService
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 
 @Service
-class CustomUserDetailsService(var userRepository: UserRepository) : UserDetailsService {
+class CustomUserDetailsService(private val userService: UserService): UserDetailsService {
 
     @Transactional
-    @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(email: String): UserDetails {
-        val user: User = userRepository.findByEmail(email)?: throw UsernameNotFoundException("User not found with email : $email");
+        val user: User = userService.getUserByEmail(email)
         return UserPrincipal.create(user)
     }
 
     @Transactional
     fun loadUserById(id: Long): UserDetails {
-        val user: User = userRepository.findByIdOrNull(id) ?: throw ResourceNotFoundException("User", "id", id)
+        val user: User = userService.getUserById(id)
         return UserPrincipal.create(user)
     }
 }

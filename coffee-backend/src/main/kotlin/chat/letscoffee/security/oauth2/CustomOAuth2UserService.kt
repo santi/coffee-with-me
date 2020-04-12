@@ -2,11 +2,11 @@ package chat.letscoffee.security.oauth2
 
 import chat.letscoffee.exception.OAuth2AuthenticationProcessingException
 import chat.letscoffee.security.model.AuthProvider
-import chat.letscoffee.user.User
 import chat.letscoffee.security.oauth2.user.OAuth2UserInfo
 import chat.letscoffee.security.oauth2.user.OAuth2UserInfoFactory
-import chat.letscoffee.user.UserRepository
 import chat.letscoffee.security.security.UserPrincipal
+import chat.letscoffee.user.User
+import chat.letscoffee.user.UserService
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 
 @Service
-class CustomOAuth2UserService( private val userRepository: UserRepository) : DefaultOAuth2UserService() {
+class CustomOAuth2UserService(
+    private val userService: UserService
+) : DefaultOAuth2UserService() {
 
     @Throws(OAuth2AuthenticationException::class)
     override fun loadUser(oAuth2UserRequest: OAuth2UserRequest): OAuth2User {
@@ -36,15 +38,13 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
         if (StringUtils.isEmpty(oAuth2UserInfo.email)) {
             throw OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider")
         }
-        val userOptional: User? = userRepository.findByEmail(oAuth2UserInfo.email)
-        // TODO: Check that it's not possible to spoof an email. Gotta be secure
+
+        val userExists = userService.existsByEmail(oAuth2UserInfo.email)
         var user: User
-        if (userOptional != null) {
-            user = userOptional
-            if (user.provider != AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase())) {
-                throw OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
-                        user.provider + " account. Please use your " + user.provider +
-                        " account to login.")
+        if (userExists) {
+            user = userService.getUserByEmail(oAuth2UserInfo.email)
+            if (userHasAnotherProvider(user, oAuth2UserRequest)) {
+                throw OAuth2AuthenticationProcessingException("You are already signed up with a ${user.provider} account. Use that account to login instead")
             }
             user = updateExistingUser(user, oAuth2UserInfo)
         } else {
@@ -54,18 +54,23 @@ class CustomOAuth2UserService( private val userRepository: UserRepository) : Def
     }
 
     private fun registerNewUser(oAuth2UserRequest: OAuth2UserRequest, oAuth2UserInfo: OAuth2UserInfo): User {
-        val user = User(provider = AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase()),
+        val user = User(
+            provider = AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase()),
             providerId = oAuth2UserInfo.id,
             name = oAuth2UserInfo.name,
             email = oAuth2UserInfo.email,
-            imageUrl = oAuth2UserInfo.imageUrl)
-
-        return userRepository.save(user)
+            imageUrl = oAuth2UserInfo.imageUrl
+        )
+        return userService.create(user)
     }
 
     private fun updateExistingUser(existingUser: User, oAuth2UserInfo: OAuth2UserInfo): User {
         existingUser.name = oAuth2UserInfo.name
         existingUser.imageUrl = oAuth2UserInfo.imageUrl
-        return userRepository.save(existingUser)
+        return userService.update(existingUser)
+    }
+
+    private fun userHasAnotherProvider(user: User, oAuth2UserRequest: OAuth2UserRequest): Boolean {
+        return user.provider != AuthProvider.valueOf(oAuth2UserRequest.clientRegistration.registrationId.toUpperCase())
     }
 }
