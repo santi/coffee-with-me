@@ -29,6 +29,7 @@ class User(
         var providerId: String? = null, // Is it used? Do we need it?
 
         @ManyToMany(cascade = [CascadeType.ALL])
+        @JsonIgnore
         val friends: MutableSet<User> = mutableSetOf(),
 
         @JsonIgnore
