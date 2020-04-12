@@ -10,6 +10,8 @@ spring:
     password: secret
     platform: postgres
     driver-class-name: org.postgresql.Driver
+    tomcat:
+      max-active: 1
   jpa:
     show-sql: true
     hibernate:
