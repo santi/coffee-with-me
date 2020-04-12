@@ -88,13 +88,14 @@ class LoginForm extends Component {
         event.preventDefault();   
 
         const loginRequest = Object.assign({}, this.state);
-
         login(loginRequest)
         .then(response => {
-            localStorage.setItem(ACCESS_TOKEN, response.body);
+            console.log(response);
+            localStorage.setItem(ACCESS_TOKEN, response);
             Alert.success("You're successfully logged in!");
             this.props.history.push("/");
         }).catch(error => {
+            console.log(error);
             Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
     }

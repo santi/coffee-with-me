@@ -1,5 +1,28 @@
 import { API_BASE_URL, ACCESS_TOKEN } from './constants';
 
+const request_text = (options) => {
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    })
+    
+    if(localStorage.getItem(ACCESS_TOKEN)) {
+        headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
+    }
+
+    const defaults = {headers: headers};
+    options = Object.assign({}, defaults, options);
+    return fetch(options.url, options)
+    .then(response => {
+        return response.text().then(text => {
+            if(!response.ok) {
+                return Promise.reject(text);
+            }
+            return text;
+        })
+});
+};
+
+
 const request = (options) => {
     const headers = new Headers({
         'Content-Type': 'application/json',
@@ -11,16 +34,15 @@ const request = (options) => {
 
     const defaults = {headers: headers};
     options = Object.assign({}, defaults, options);
-
     return fetch(options.url, options)
-    .then(response => 
-        response.json().then(json => {
+    .then(response => {
+        return response.json().then(json => {
             if(!response.ok) {
                 return Promise.reject(json);
             }
             return json;
         })
-    );
+});
 };
 
 export function getCurrentUser() {
@@ -35,7 +57,7 @@ export function getCurrentUser() {
 }
 
 export function login(loginRequest) {
-    return request({
+    return request_text({
         url: API_BASE_URL + "/auth/login",
         method: 'POST',
         body: JSON.stringify(loginRequest)
@@ -43,7 +65,7 @@ export function login(loginRequest) {
 }
 
 export function signup(signupRequest) {
-    return request({
+    return request_text({
         url: API_BASE_URL + "/auth/signup",
         method: 'POST',
         body: JSON.stringify(signupRequest)
