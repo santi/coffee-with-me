@@ -12,9 +12,8 @@ import javax.servlet.http.HttpServletResponse
 @Service
 class HttpCookieOAuth2AuthorizationRequestRepository : AuthorizationRequestRepository<OAuth2AuthorizationRequest?> {
     override fun loadAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest? {
-        return CookieUtils.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-                .map { cookie: Cookie -> CookieUtils.deserialize(cookie, OAuth2AuthorizationRequest::class.java) }
-                .orElse(null)
+        val cookie = CookieUtils.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+            return if (cookie != null) CookieUtils.deserialize(cookie, OAuth2AuthorizationRequest::class.java) else null
     }
 
     override fun saveAuthorizationRequest(authorizationRequest: OAuth2AuthorizationRequest?, request: HttpServletRequest, response: HttpServletResponse) {

@@ -1,11 +1,10 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	id("org.springframework.boot")
+	id("org.jetbrains.kotlin.plugin.jpa")
 	kotlin("jvm")
 	kotlin("plugin.spring")
-	id("org.jetbrains.kotlin.plugin.jpa") version "1.3.71"
-
+	groovy
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_11
@@ -14,7 +13,6 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 repositories {
 	mavenCentral()
 	jcenter()
-
 }
 
 
@@ -42,13 +40,9 @@ dependencies {
 	implementation("com.github.kittinunf.fuel:fuel-gson:2.2.1") //Fuel Gson
 	implementation("com.google.code.gson:gson:2.8.5") //Gson
 
-	implementation("org.jetbrains.kotlin:kotlin-noarg")
-
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
+	testImplementation("org.codehaus.groovy:groovy-all:2.5.7")
+	testImplementation("org.spockframework:spock-core:1.3-groovy-2.5")
 }
