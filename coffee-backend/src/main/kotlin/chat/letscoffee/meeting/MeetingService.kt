@@ -1,15 +1,18 @@
 package chat.letscoffee.meeting
 
 import chat.letscoffee.exception.ServiceUnavailableException
+import chat.letscoffee.user.User
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.gson.responseObject
 import org.springframework.stereotype.Component
 
 
 @Component
-class MeetingService {
+class MeetingService(
+    private val meetingRepository: MeetingRepository
+) {
 
-    fun createMeetingRoom(): MeetingResponse {
+    fun createMeetingRoom(user: User): MeetingResponse {
 
         val bodyJson = "{\"Title\" : \"Coffee With Me\"}"
         val (request, response, result) = Fuel
@@ -19,7 +22,15 @@ class MeetingService {
             .responseObject<MeetingResponse>()
 
         return result.fold(
-            { it },
+            {
+                val meeting = Meeting(
+                    owner = user,
+                    link = it.joinLink,
+                    provider = MeetingProviderType.SKYPE
+                )
+                meetingRepository.save(meeting)
+                return@fold it
+            },
             { throw ServiceUnavailableException("Could not create Skype meeting room.", it) }
         )
     }
