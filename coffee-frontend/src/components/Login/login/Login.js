@@ -1,124 +1,181 @@
-import React, { Component } from 'react';
-import './Login.css';
+import React, { useState, useEffect, Component } from 'react';
+import TextField from '@material-ui/core/TextField';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import CardHeader from '@material-ui/core/CardHeader';
+import './Login.scss';
 import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, ACCESS_TOKEN } from '../../../utils/constants';
 import { login } from '../../../utils/loginUtils';
 import { Link, Redirect } from 'react-router-dom'
  import fbLogo from '../../../img/fb-logo.png';
 import googleLogo from '../../../img/google-logo.png';
 import Alert from 'react-s-alert';
+import Button from '@material-ui/core/Button';
 
-class Login extends Component {
-    componentDidMount() {
-        // If the OAuth2 login encounters an error, the user is redirected to the /login page with an error.
-        // Here we display the error and then remove the error query parameter from the location.
-        if(this.props.location.state && this.props.location.state.error) {
-            setTimeout(() => {
-                Alert.error(this.props.location.state.error, {
-                    timeout: 5000
-                });
-                this.props.history.replace({
-                    pathname: this.props.location.pathname,
-                    state: {}
-                });
-            }, 100);
-        }
-    }
-    
-    render() {
-        if(this.props.authenticated) {
-            return <Redirect
-                to={{
-                pathname: "/",
-                state: { from: this.props.location }
-            }}/>;            
-        }
 
-        return (
-            <div className="login-container">
-                <div className="login-content">
-                    <h1 className="login-title">Login to SpringSocial</h1>
-                    <SocialLogin />
-                    <div className="or-separator">
-                        <span className="or-text">OR</span>
-                    </div>
-                    <LoginForm {...this.props} />
-                    <span className="signup-link">New user? <Link to="/signup">Sign up!</Link></span>
-                </div>
-            </div>
-        );
-    }
+
+
+
+function Login() {
+
+    return (
+        <div className="login-wrapper">
+            <SocialLogin />
+            <LoginForm />
+        </div>
+    ) 
 }
 
-class SocialLogin extends Component {
-    render() {
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    button: {
+      marginBottom: theme.spacing(2),
+    },
+
+  }),
+);
+
+
+function SocialLogin() {
+    const classes = useStyles();
+
+
         return (
             <div className="social-login">
-                <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
-                    <img src={googleLogo} alt="Google" /> Log in with Google</a>
-                <a className="btn btn-block social-btn facebook" href={FACEBOOK_AUTH_URL}>
-                    <img src={fbLogo} alt="Facebook" /> Log in with Facebook</a>
+            <Button
+        variant="contained"
+        color="primary"
+        href={{FACEBOOK_AUTH_URL}}
+        className={classes.button}
+            >
+        Log in with Facebook
+      </Button>
+      <Button
+        variant="contained"
+        color="secondary"
+        href={{GOOGLE_AUTH_URL}}
+        className="social-login-button"
+
+            >
+        Log in with google
+      </Button>
             </div>
         );
-    }
+    
+}
+
+function FacebookImage() {
+    return (
+        <img src={fbLogo} alt="Facebook" className="social-btn facebook"/>
+    )
 }
 
 
-class LoginForm extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            email: '',
-            password: ''
-        };
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+const useStylesLogin = makeStyles((theme) =>
+  createStyles({
+    container: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      margin: `${theme.spacing(0)} auto`
+    },
+    loginBtn: {
+      marginTop: theme.spacing(2),
+      flexGrow: 1
+    },
+    header: {
+      textAlign: 'center',
+      background: '#212121',
+      color: '#fff'
+    },
+    card: {
+      marginTop: theme.spacing(10),
+      width: '100%',
     }
 
-    handleInputChange(event) {
-        const target = event.target;
-        const inputName = target.name;        
-        const inputValue = target.value;
+  }),
+);
 
-        this.setState({
-            [inputName] : inputValue
-        });        
-    }
 
-    handleSubmit(event) {
-        event.preventDefault();   
-
-        const loginRequest = Object.assign({}, this.state);
-        login(loginRequest)
-        .then(response => {
-            console.log(response);
-            localStorage.setItem(ACCESS_TOKEN, response);
-            Alert.success("You're successfully logged in!");
-            this.props.history.push("/");
-        }).catch(error => {
-            console.log(error);
-            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-        });
-    }
-    
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <div className="form-item">
-                    <input type="email" name="email" 
-                        className="form-control" placeholder="Email"
-                        value={this.state.email} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <input type="password" name="password" 
-                        className="form-control" placeholder="Password"
-                        value={this.state.password} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <button type="submit" className="btn btn-block btn-primary">Login</button>
-                </div>
-            </form>                    
-        );
-    }
+function LoginForm() {
+    const classes = useStylesLogin();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+    const [helperText, setHelperText] = useState('');
+    const [error, setError] = useState(false);
+  
+    useEffect(() => {
+      if (username.trim() && password.trim()) {
+        setIsButtonDisabled(false);
+      } else {
+        setIsButtonDisabled(true);
+      }
+    }, [username, password]);
+  
+    const handleLogin = () => {
+      if (username === 'test@test.no' && password === 'test') {
+        setError(false);
+        setHelperText('Login Successfully');
+        //TODO: Handle Login
+      } else {
+        setError(true);
+        setHelperText('Incorrect username or password')
+      }
+    };
+    // Handle enter press to login
+    const handleKeyPress = (e) => {
+      if (e.keyCode === 13 || e.which === 13) {
+        isButtonDisabled || handleLogin();
+      }
+    };
+  
+    return (
+        <div className={classes.container}>
+          <Card className={classes.card}>
+            <CardContent>
+              <div>
+                <TextField
+                  error={error}
+                  fullWidth
+                  id="username"
+                  type="email"
+                  label="Username"
+                  placeholder="Username"
+                  margin="normal"
+                  onChange={(e)=>setUsername(e.target.value)}
+                  onKeyPress={(e)=>handleKeyPress(e)}
+                />
+                <TextField
+                  error={error}
+                  fullWidth
+                  id="password"
+                  type="password"
+                  label="Password"
+                  placeholder="Password"
+                  margin="normal"
+                  helperText={helperText}
+                  onChange={(e)=>setPassword(e.target.value)}
+                  onKeyPress={(e)=>handleKeyPress(e)}
+                />
+              </div>
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="contained"
+                size="large"
+                color="secondary"
+                className={classes.loginBtn}
+                onClick={()=>handleLogin()}
+                disabled={isButtonDisabled}>
+                Login
+              </Button>
+            </CardActions>
+          </Card>
+        </div>
+    );
 }
 
 export default Login
