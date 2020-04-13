@@ -1,6 +1,7 @@
 package chat.letscoffee.meeting
 
 import chat.letscoffee.user.User
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.Instant
 import java.time.Instant.now
 import javax.persistence.*
@@ -18,6 +19,7 @@ data class Meeting(
     @Column(nullable = false)
     val created: Instant = now(),
 
+    @JsonIgnore
     @Column(nullable = false)
     var active: Boolean = true,
 

@@ -5,7 +5,6 @@ import chat.letscoffee.exception.ServiceUnavailableException
 import chat.letscoffee.user.User
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.gson.responseObject
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 
@@ -14,7 +13,7 @@ class MeetingService(
     private val meetingRepository: MeetingRepository
 ) {
 
-    fun createMeetingRoom(user: User): MeetingResponse {
+    fun createMeetingRoom(user: User): Meeting {
 
         val bodyJson = "{\"Title\" : \"Coffee With Me\"}"
         val (request, response, result) = Fuel
@@ -25,13 +24,13 @@ class MeetingService(
 
         return result.fold(
             {
-                val meeting = Meeting(
+                var meeting = Meeting(
                     owner = user,
                     link = it.joinLink,
                     provider = MeetingProviderType.SKYPE
                 )
-                meetingRepository.save(meeting)
-                return@fold it
+                meeting = meetingRepository.save(meeting)
+                return@fold meeting
             },
             { throw ServiceUnavailableException("Could not create Skype meeting room.", it) }
         )
@@ -41,7 +40,7 @@ class MeetingService(
         return meetingRepository.findByIdAndActiveTrue(id) ?: throw ResourceNotFoundException("Meeting", "id", id)
     }
 
-    fun update(meeting: Meeting) {
-        meetingRepository.save(meeting)
+    fun update(meeting: Meeting): Meeting {
+        return meetingRepository.save(meeting)
     }
 }

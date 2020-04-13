@@ -20,7 +20,7 @@ class MeetingController(
     @PreAuthorize("hasRole('ROLE')")
     fun create(
         @CurrentUser userPrincipal: UserPrincipal
-    ): MeetingResponse {
+    ): Meeting {
         val user = userService.getUserById(userPrincipal.id)
         return meetingService.createMeetingRoom(user)
     }
@@ -40,6 +40,23 @@ class MeetingController(
         meetingService.update(meeting)
 
         return ResponseEntity.ok("Meeting room $meetingRoomId deleted.")
+    }
+
+    @GetMapping("/{meetingRoomId}")
+    @PreAuthorize("hasRole('ROLE')")
+    fun get(
+        @CurrentUser userPrincipal: UserPrincipal,
+        @PathVariable meetingRoomId: Long
+    ): Meeting {
+        // TODO: Implement way to distribute meeting room links without leaking information to unauthorized users
+        val meeting = meetingService.getMeetingRoomById(meetingRoomId)
+        val user = userService.getUserById(userPrincipal.id)
+        // TODO: If you always need to check that the correct user queries for a meeting, refactor to do check in MeetingService
+        if (meeting.owner != user) {
+            throw ResourceNotFoundException("Meeting", "id, owner", "$meetingRoomId, ${user.id}")
+        }
+
+        return meeting
     }
 
 }
