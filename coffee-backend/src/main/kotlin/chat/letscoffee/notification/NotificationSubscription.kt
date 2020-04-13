@@ -9,29 +9,35 @@ import org.bouncycastle.math.ec.ECPoint
 import java.security.KeyFactory
 import java.security.PublicKey
 import java.security.Security
+import java.time.Instant
 import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "notification_subscription")
+@Table(
+    name = "notification_subscription",
+    uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("user_id"), name = "notification_subscription_user_id_uix")])
 class NotificationSubscription(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", foreignKey = ForeignKey(name = "notification_subscription_user_id_fkey"), nullable = false)
     val user: User,
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     val endpoint: String,
 
-    @Column
+    @Column(columnDefinition = "TEXT", nullable = false)
     // TODO: What is really auth?
     val auth: String,
 
-    @Column
-    val publicKey: String
+    @Column(columnDefinition = "TEXT", nullable = false)
+    val publicKey: String,
+
+    @Column(nullable = false)
+    val created: Instant = Instant.now()
 ) {
 
     /**
@@ -49,6 +55,7 @@ class NotificationSubscription(
             val pubSpec = ECPublicKeySpec(point, ecSpec)
             return keyFactory.generatePublic(pubSpec)
         }
+
     companion object {
         init {
             // Add BouncyCastle as an algorithm provider
@@ -56,6 +63,7 @@ class NotificationSubscription(
                 Security.addProvider(BouncyCastleProvider())
             }
         }
+
         private val keyFactory = KeyFactory.getInstance("ECDH", BouncyCastleProvider.PROVIDER_NAME)
         private val ecSpec: ECNamedCurveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256r1")
     }
