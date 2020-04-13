@@ -1,9 +1,11 @@
 package chat.letscoffee.meeting
 
+import chat.letscoffee.exception.ResourceNotFoundException
 import chat.letscoffee.exception.ServiceUnavailableException
 import chat.letscoffee.user.User
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.gson.responseObject
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
 
@@ -33,5 +35,13 @@ class MeetingService(
             },
             { throw ServiceUnavailableException("Could not create Skype meeting room.", it) }
         )
+    }
+
+    fun getMeetingRoomById(id: Long): Meeting {
+        return meetingRepository.findByIdAndActiveTrue(id) ?: throw ResourceNotFoundException("Meeting", "id", id)
+    }
+
+    fun update(meeting: Meeting) {
+        meetingRepository.save(meeting)
     }
 }

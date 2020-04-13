@@ -19,7 +19,7 @@ data class Meeting(
     val created: Instant = now(),
 
     @Column(nullable = false)
-    val active: Boolean = true,
+    var active: Boolean = true,
 
     @OneToOne
     @JoinColumn(name = "owner", foreignKey = ForeignKey(name = "meeting_owner_fkey"), nullable = false)
