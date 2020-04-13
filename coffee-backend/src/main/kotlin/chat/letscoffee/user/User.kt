@@ -11,7 +11,9 @@ import javax.validation.constraints.Email
 
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
-@Table(name = "user_account", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("email"), name = "user_account_email_uix")])
+@Table(
+    name = "user_account",
+    indexes = [Index(columnList = "email", name = "user_account_email_uix", unique = true)])
 class User(
 
     @Id

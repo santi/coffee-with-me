@@ -7,7 +7,9 @@ import javax.persistence.*
 
 
 @Entity
-@Table(name = "friend_request")
+@Table(
+    name = "friend_request",
+    indexes = [Index(columnList = "user_id_from,user_id_to", name = "friend_request_user_id_from_user_id_to_uix", unique = true)])
 data class FriendRequest(
 
     @Id

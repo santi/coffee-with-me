@@ -16,7 +16,7 @@ import javax.persistence.*
 @Entity
 @Table(
     name = "notification_subscription",
-    uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("user_id"), name = "notification_subscription_user_id_uix")])
+    indexes = [Index(columnList = "user_id", name = "notification_subscription_user_id_uix", unique = true)])
 class NotificationSubscription(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
