@@ -1,8 +1,8 @@
 package chat.letscoffee.security.security
 
 import chat.letscoffee.exception.ResourceNotFoundException
-import chat.letscoffee.security.model.User
-import chat.letscoffee.security.repository.UserRepository
+import chat.letscoffee.user.User
+import chat.letscoffee.user.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
