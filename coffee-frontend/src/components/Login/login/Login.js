@@ -85,11 +85,6 @@ const useStylesLogin = makeStyles((theme) =>
       marginTop: theme.spacing(2),
       flexGrow: 1
     },
-    header: {
-      textAlign: 'center',
-      background: '#212121',
-      color: '#fff'
-    },
     card: {
       marginTop: theme.spacing(10),
       width: '100%',
@@ -101,25 +96,29 @@ const useStylesLogin = makeStyles((theme) =>
 
 function LoginForm() {
     const classes = useStylesLogin();
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [helperText, setHelperText] = useState('');
     const [error, setError] = useState(false);
   
     useEffect(() => {
-      if (username.trim() && password.trim()) {
+      if (email.trim() && password.trim()) {
         setIsButtonDisabled(false);
       } else {
         setIsButtonDisabled(true);
       }
-    }, [username, password]);
+    }, [email, password]);
   
-    const handleLogin = () => {
-      if (username === 'test@test.no' && password === 'test') {
+    const handleLogin = async () => {
+      if (email === 'test@test.no' && password === 'test') {
         setError(false);
         setHelperText('Login Successfully');
         //TODO: Handle Login
+        const loginRequest = {email, password}
+        console.log(loginRequest);
+        const loginResponse = await login(loginRequest)
+        console.log(loginResponse);
       } else {
         setError(true);
         setHelperText('Incorrect username or password')
@@ -145,7 +144,7 @@ function LoginForm() {
                   label="Username"
                   placeholder="Username"
                   margin="normal"
-                  onChange={(e)=>setUsername(e.target.value)}
+                  onChange={(e)=>setEmail(e.target.value)}
                   onKeyPress={(e)=>handleKeyPress(e)}
                 />
                 <TextField
@@ -173,6 +172,8 @@ function LoginForm() {
                 Login
               </Button>
             </CardActions>
+            <span className="signup-link">New user? <Link to="/signup">Sign up!</Link></span>
+
           </Card>
         </div>
     );

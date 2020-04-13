@@ -1,113 +1,132 @@
-import React, { Component } from 'react';
-import './Signup.css';
-import { Link, Redirect } from 'react-router-dom'
-import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL } from '../../../utils/constants';
+import './Signup.scss';
+import React, { useState, useEffect, Component } from 'react';
+import TextField from '@material-ui/core/TextField';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
 import { signup } from '../../../utils/loginUtils';
-import fbLogo from '../../../img/fb-logo.png';
+import { Link, Redirect } from 'react-router-dom'
+ import fbLogo from '../../../img/fb-logo.png';
 import googleLogo from '../../../img/google-logo.png';
 import Alert from 'react-s-alert';
+import Button from '@material-ui/core/Button';
 
-class Signup extends Component {
-    render() {
-        if(this.props.authenticated) {
-            return <Redirect
-                to={{
-                pathname: "/",
-                state: { from: this.props.location }
-            }}/>;            
-        }
-
-        return (
-            <div className="signup-container">
-                <div className="signup-content">
-                    <h1 className="signup-title">Signup with SpringSocial</h1>
-                    <SocialSignup />
-                    <div className="or-separator">
-                        <span className="or-text">OR</span>
-                    </div>
-                    <SignupForm {...this.props} />
-                    <span className="login-link">Already have an account? <Link to="/login">Login!</Link></span>
-                </div>
-            </div>
-        );
+const useStylesLogin = makeStyles((theme) =>
+  createStyles({
+    container: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      margin: `${theme.spacing(0)} auto`
+    },
+    loginBtn: {
+      marginTop: theme.spacing(2),
+      flexGrow: 1
+    },
+    card: {
+      marginTop: theme.spacing(10),
+      width: '100%',
     }
+
+  }),
+);
+
+
+function SignupForm() {
+    const classes = useStylesLogin();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
+
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+    const [helperText, setHelperText] = useState('');
+    const [error, setError] = useState(false);
+  
+    useEffect(() => {
+      if (email.trim() && password.trim()) {
+        setIsButtonDisabled(false);
+      } else {
+        setIsButtonDisabled(true);
+      }
+    }, [email, password]);
+  
+    const handleSignup = async () => {
+      if (password.length > 3) {
+        setError(false);
+        setHelperText('Login Successfully');
+        const signuprequest = {email, password, name}
+        const signupResponse = await signup(signuprequest)
+        console.log(signupResponse);
+      } else {
+        setError(true);
+        setHelperText('Password is not secure enough')
+      }
+    };
+    // Handle enter press to login
+    const handleKeyPress = (e) => {
+      if (e.keyCode === 13 || e.which === 13) {
+        isButtonDisabled || handleSignup();
+      }
+    };
+  
+    return (
+        <div className={classes.container}>
+          <Card className={classes.card}>
+            <CardContent>
+              <div>
+              <TextField
+                  error={error}
+                  fullWidth
+                  id="name"
+                  type="name"
+                  label="Name"
+                  placeholder="Name"
+                  margin="normal"
+                  onChange={(e)=>setName(e.target.value)}
+                  onKeyPress={(e)=>handleKeyPress(e)}
+                />
+                <TextField
+                  error={error}
+                  fullWidth
+                  id="username"
+                  type="email"
+                  label="Email"
+                  placeholder="Email"
+                  margin="normal"
+                  onChange={(e)=>setEmail(e.target.value)}
+                  onKeyPress={(e)=>handleKeyPress(e)}
+                />
+                <TextField
+                  error={error}
+                  fullWidth
+                  id="password"
+                  type="password"
+                  label="Password"
+                  placeholder="Password"
+                  margin="normal"
+                  helperText={helperText}
+                  onChange={(e)=>setPassword(e.target.value)}
+                  onKeyPress={(e)=>handleKeyPress(e)}
+                />
+                
+              </div>
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="contained"
+                size="large"
+                color="secondary"
+                className={classes.loginBtn}
+                onClick={()=>handleSignup()}
+                disabled={isButtonDisabled}>
+                Sign Up
+              </Button>
+            </CardActions>
+            <span className="signup-link">Already have a user? <Link to="/login">Log in!</Link></span>
+
+          </Card>
+        </div>
+    );
 }
 
-
-class SocialSignup extends Component {
-    render() {
-        return (
-            <div className="social-signup">
-                <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
-                    <img src={googleLogo} alt="Google" /> Sign up with Google</a>
-                <a className="btn btn-block social-btn facebook" href={FACEBOOK_AUTH_URL}>
-                    <img src={fbLogo} alt="Facebook" /> Sign up with Facebook</a>
-            </div>
-        );
-    }
-}
-
-class SignupForm extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: '',
-            email: '',
-            password: ''
-        }
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleInputChange(event) {
-        const target = event.target;
-        const inputName = target.name;        
-        const inputValue = target.value;
-
-        this.setState({
-            [inputName] : inputValue
-        });        
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();   
-
-        const signUpRequest = Object.assign({}, this.state);
-
-        signup(signUpRequest)
-        .then(response => {
-            Alert.success("You're successfully registered. Please login to continue!");
-            this.props.history.push("/login");
-        }).catch(error => {
-            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-        });
-    }
-
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <div className="form-item">
-                    <input type="text" name="name" 
-                        className="form-control" placeholder="Name"
-                        value={this.state.name} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <input type="email" name="email" 
-                        className="form-control" placeholder="Email"
-                        value={this.state.email} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <input type="password" name="password" 
-                        className="form-control" placeholder="Password"
-                        value={this.state.password} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <button type="submit" className="btn btn-block btn-primary" >Sign Up</button>
-                </div>
-            </form>                    
-
-        );
-    }
-}
-
-export default Signup
+export default SignupForm

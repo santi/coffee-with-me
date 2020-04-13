@@ -1,4 +1,15 @@
 import { API_BASE_URL, ACCESS_TOKEN } from './constants';
+import axios from 'axios'
+
+
+
+export const login = (loginRequest) =>  {
+    return axios.post(API_BASE_URL + "/auth/login", loginRequest)
+}
+
+export const signup = (signupRequest) =>  {
+    return axios.post(API_BASE_URL + "/auth/signup", signupRequest)
+}
 
 const request_text = (options) => {
     const headers = new Headers({
@@ -56,18 +67,3 @@ export function getCurrentUser() {
     });
 }
 
-export function login(loginRequest) {
-    return request_text({
-        url: API_BASE_URL + "/auth/login",
-        method: 'POST',
-        body: JSON.stringify(loginRequest)
-    });
-}
-
-export function signup(signupRequest) {
-    return request_text({
-        url: API_BASE_URL + "/auth/signup",
-        method: 'POST',
-        body: JSON.stringify(signupRequest)
-    });
-}
