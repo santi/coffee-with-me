@@ -5,18 +5,12 @@ spring:
   main:
     banner-mode: "off"
   datasource:
-    url: url
-    username: secret
-    password: secret
-    platform: postgres
-    driver-class-name: org.postgresql.Driver
     tomcat:
       max-active: 1
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
-      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   security:
     oauth2:
