@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -14,7 +14,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-
+import { getCurrentUser } from '../../utils/loginUtils';
 import Content from '../Content/Content'
 
 
@@ -58,11 +58,19 @@ function Wrapper() {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const auth = React.useState(true);
+  const [currentUser, setCurrentUser] = useState('')
+
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    setCurrentUser(currentUser);
+}, []);
 
 
 function handleDrawerToggle() {
     setMobileOpen(!mobileOpen)
   }
+
+  
 
 function handleProfileClick() {
     console.log('profile clicked');

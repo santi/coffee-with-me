@@ -4,15 +4,14 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import CardHeader from '@material-ui/core/CardHeader';
 import './Login.scss';
 import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, ACCESS_TOKEN } from '../../../utils/constants';
 import { login } from '../../../utils/loginUtils';
 import { Link, Redirect } from 'react-router-dom'
  import fbLogo from '../../../img/fb-logo.png';
 import googleLogo from '../../../img/google-logo.png';
-import Alert from 'react-s-alert';
 import Button from '@material-ui/core/Button';
+import useRouter from "use-react-router";
 
 
 
@@ -43,12 +42,13 @@ function SocialLogin() {
     const classes = useStyles();
 
 
+
         return (
             <div className="social-login">
             <Button
         variant="contained"
         color="primary"
-        href={{FACEBOOK_AUTH_URL}}
+        href={FACEBOOK_AUTH_URL}
         className={classes.button}
             >
         Log in with Facebook
@@ -56,7 +56,7 @@ function SocialLogin() {
       <Button
         variant="contained"
         color="secondary"
-        href={{GOOGLE_AUTH_URL}}
+        href={GOOGLE_AUTH_URL}
         className="social-login-button"
 
             >
@@ -95,13 +95,15 @@ const useStylesLogin = makeStyles((theme) =>
 
 
 function LoginForm() {
+
     const classes = useStylesLogin();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [helperText, setHelperText] = useState('');
     const [error, setError] = useState(false);
-  
+    const {history} = useRouter();
+
     useEffect(() => {
       if (email.trim() && password.trim()) {
         setIsButtonDisabled(false);
@@ -114,11 +116,13 @@ function LoginForm() {
       if (email === 'test@test.no' && password === 'test') {
         setError(false);
         setHelperText('Login Successfully');
-        //TODO: Handle Login
         const loginRequest = {email, password}
-        console.log(loginRequest);
         const loginResponse = await login(loginRequest)
-        console.log(loginResponse);
+        console.log(loginResponse)
+        localStorage.setItem(ACCESS_TOKEN, loginResponse.data)
+        history.push('/')
+
+
       } else {
         setError(true);
         setHelperText('Incorrect username or password')
