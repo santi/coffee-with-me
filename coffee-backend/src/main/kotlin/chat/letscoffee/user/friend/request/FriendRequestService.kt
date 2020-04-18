@@ -6,6 +6,7 @@ import chat.letscoffee.user.User
 import chat.letscoffee.user.UserService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 @Service
 class FriendRequestService(private val repository: FriendRequestRepository, private val userService: UserService) {
@@ -20,12 +21,12 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
     }
 
     fun getRequestsTo(to: User): List<FriendRequest> {
-        return repository.findByToAndAcceptedIsNull(to)
+        return repository.findByToAndStatusIs(to)
     }
 
 
     fun getRequestsFrom(from: User): List<FriendRequest> {
-        return repository.findByFromAndAcceptedIsNull(from)
+        return repository.findByFromAndStatusIs(from)
     }
 
     fun deleteRequest(from: User, id: Long): Boolean {
@@ -43,7 +44,8 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
         if (to != request.to) {
             throw ResourceNotFoundException("FriendRequest", "id", id)
         }
-        request.accepted = true
+        request.status = FriendRequestStatus.ACCEPTED
+        request.responded = Instant.now()
         repository.save(request)
         val from = request.from
         // When accepting a request, must update the followers for each User
@@ -59,7 +61,8 @@ class FriendRequestService(private val repository: FriendRequestRepository, priv
         if (to != request.to) {
             throw ResourceNotFoundException("FriendRequest", "id", id)
         }
-        request.accepted = false
+        request.status = FriendRequestStatus.REJECTED
+        request.responded = Instant.now()
         repository.save(request)
     }
 

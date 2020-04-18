@@ -4,6 +4,8 @@ import chat.letscoffee.exception.ResourceNotFoundException
 import chat.letscoffee.security.model.AuthProvider
 import spock.lang.Specification
 
+import java.time.Instant
+
 class UserServiceSpec extends Specification {
 
 
@@ -14,13 +16,14 @@ class UserServiceSpec extends Specification {
         0L,
         "name",
         existingEmail,
+        false,
         null,
-        true,
         null,
         AuthProvider.LOCAL,
         null,
         [] as Set,
-        [] as Set
+        [] as Set,
+        Instant.now()
     )
 
     def userRepository = Mock(UserRepository)
