@@ -17,4 +17,16 @@ class UserService(
         return userRepository.findByIdOrNull(id) ?: throw ResourceNotFoundException("User", "id", id)
     }
 
+    fun existsByEmail(email: String): Boolean {
+        return userRepository.existsByEmail(email)
+    }
+
+    fun create(user: User): User {
+        return userRepository.save(user)
+    }
+
+    fun update(user: User): User {
+        return userRepository.save(user)
+    }
+
 }
