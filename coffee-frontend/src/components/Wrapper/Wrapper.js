@@ -16,6 +16,46 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { getCurrentUser } from '../../utils/loginUtils';
 import Content from '../Content/Content'
+import { useHistory } from "react-router-dom";
+
+
+export const AuthContext = React.createContext(); // added this
+
+
+const initialState = {
+    isAuthenticated: false,
+    user: null,
+    token: null,
+  };
+
+const reducer = (state, action) => {
+    switch (action.type) {
+
+      case "LOGIN":
+        console.log('LOGIN CALLED')
+        localStorage.setItem("token", JSON.stringify(action.payload));
+        return {
+          ...state,
+          isAuthenticated: true,
+          token: action.payload
+        };
+      case "LOGOUT":
+        localStorage.clear();
+        return {
+          ...state,
+          isAuthenticated: false,
+          user: null
+        };
+    case  "GETUSER":
+        console.log(action.payload)
+        return {
+            ...state,
+            user: action.payload
+        }
+      default:
+        return state;
+    }
+  };
 
 
 const drawerWidth = 240;
@@ -59,10 +99,19 @@ function Wrapper() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const auth = React.useState(true);
   const [currentUser, setCurrentUser] = useState('')
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const history = useHistory();
+
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    setCurrentUser(currentUser);
+    async function getUser() {
+        const user = await getCurrentUser()
+        console.log(user)
+        dispatch({type: "GETUSER", 
+                payload: user.data})
+        history.push("/drink")
+    }
+    getUser();
 }, []);
 
 
@@ -88,6 +137,10 @@ const drawer = (
     </div>
   );
 return (
+    <AuthContext.Provider value={{
+        state,
+        dispatch
+      }}>
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
@@ -104,7 +157,7 @@ return (
           <Typography variant="h6" noWrap>
             Lets's Coffee
           </Typography>
-          {auth && (
+          {state.isAuthenticated && (
             <div>
               <IconButton
                 aria-label="account of current user"
@@ -159,6 +212,7 @@ return (
         <Content />
       </div>
     </div>
+    </AuthContext.Provider>
   );
 }
 export default Wrapper;

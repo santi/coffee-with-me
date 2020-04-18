@@ -10,7 +10,7 @@ import Signup from '../Login/signup/Signup'
 import { getCurrentUser } from '../../utils/loginUtils'; 
 import Profile from '../Login/profile/Profile'
 import OAuth2RedirectHandler from '../Login/oauth2/OAuth2RedirectHandler'
-
+import DrinkCoffee from "../Coffee/DrinkCoffee"
 
 function Content() {
     const [currentUser, setCurrentUser] = useState('')
@@ -28,7 +28,8 @@ function Content() {
               component={Profile}></Route>
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>  
             <Route path="/signup" component={Signup}></Route>   
-            <Route  path="/login" component={Login}></Route>           
+            <Route  path="/login" component={Login}></Route>  
+            <Route path="/drink" component={DrinkCoffee}></Route>        
 
 
           </Switch>

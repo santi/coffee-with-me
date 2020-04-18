@@ -6,14 +6,15 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import './Login.scss';
 import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, ACCESS_TOKEN } from '../../../utils/constants';
-import { login } from '../../../utils/loginUtils';
+import { login, getCurrentUser } from '../../../utils/loginUtils';
 import { Link, Redirect } from 'react-router-dom'
  import fbLogo from '../../../img/fb-logo.png';
 import googleLogo from '../../../img/google-logo.png';
 import Button from '@material-ui/core/Button';
 import useRouter from "use-react-router";
+import { useHistory } from "react-router-dom";
 
-
+import {AuthContext} from '../../Wrapper/Wrapper'
 
 
 
@@ -102,7 +103,9 @@ function LoginForm() {
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [helperText, setHelperText] = useState('');
     const [error, setError] = useState(false);
-    const {history} = useRouter();
+    const { dispatch } = React.useContext(AuthContext);
+    const history = useHistory();
+
 
     useEffect(() => {
       if (email.trim() && password.trim()) {
@@ -118,10 +121,16 @@ function LoginForm() {
         setHelperText('Login Successfully');
         const loginRequest = {email, password}
         const loginResponse = await login(loginRequest)
-        console.log(loginResponse)
         localStorage.setItem(ACCESS_TOKEN, loginResponse.data)
-        history.push('/')
-
+        dispatch({
+            type: "LOGIN",
+            payload: loginResponse.data
+        })
+        const user = await getCurrentUser()
+        console.log(user)
+        dispatch({type: "GETUSER", 
+                payload: user.data})
+        history.push("/drink")
 
       } else {
         setError(true);
