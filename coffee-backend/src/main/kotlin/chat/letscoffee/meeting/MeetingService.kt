@@ -40,7 +40,8 @@ class MeetingService(
         return meetingRepository.findByIdAndActiveTrue(id) ?: throw ResourceNotFoundException("Meeting", "id", id)
     }
 
-    fun update(meeting: Meeting): Meeting {
+    fun deactivateMeeting(meeting: Meeting): Meeting {
+        meeting.active = false
         return meetingRepository.save(meeting)
     }
 }
