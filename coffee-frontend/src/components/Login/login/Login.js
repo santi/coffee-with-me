@@ -14,7 +14,7 @@ import Button from '@material-ui/core/Button';
 import useRouter from "use-react-router";
 import { useHistory } from "react-router-dom";
 
-import {AuthContext} from '../../Wrapper/Wrapper'
+import {AuthContext} from '../../../utils/auth'
 
 
 

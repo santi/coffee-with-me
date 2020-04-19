@@ -17,9 +17,9 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { getCurrentUser } from '../../utils/loginUtils';
 import Content from '../Content/Content'
 import { useHistory } from "react-router-dom";
+import {AuthContext} from '../../utils/auth'
 
 
-export const AuthContext = React.createContext(); // added this
 
 
 const initialState = {
@@ -33,7 +33,6 @@ const reducer = (state, action) => {
 
       case "LOGIN":
         console.log('LOGIN CALLED')
-        localStorage.setItem("token", JSON.stringify(action.payload));
         return {
           ...state,
           isAuthenticated: true,
@@ -111,6 +110,7 @@ function Wrapper() {
                 payload: user.data})
         history.push("/drink")
     }
+    console.log('calling get user')
     getUser();
 }, []);
 
