@@ -126,14 +126,7 @@ export function DrawerContent() {
         {showAlert && alert}
 
         <List>
-        {friends.map((friend, index) => (
-            <ListItem button key={friend.id}>
-            <ListItemText primary={friend.name} secondary={"Last online: 2 hours ago"}/>
-
-            </ListItem>
-        ))}
-        </List>
-        <Button
+                    <Button
                 variant="contained"
                 size="large"
                 color="primary"
@@ -141,6 +134,14 @@ export function DrawerContent() {
                 onClick={()=>handleAddFriendButton()}>
                 Add new friend
         </Button>
+        {friends.map((friend, index) => (
+            <ListItem button key={friend.id}>
+            <ListItemText primary={friend.name} secondary={"Last online: 2 hours ago"}/>
+
+            </ListItem>
+        ))}
+        </List>
+
         {addFriendDialog}
 
        
