@@ -37,8 +37,6 @@ export function DrawerContent() {
     const {friends} = React.useContext(FriendContext).friends
 
     const classes = useStyles();
-    const dummyCategories = ['This is a list of all my friends', 'Vemund Santi']
-    const lastOnline = ['Last Online', 'Two hours ago']
     const [addDialog, setAddDialog] = React.useState(false);
     const [friend, setFriend] = useState('');
     const [showAlert, setShowAlert] = useState(false)
@@ -118,7 +116,9 @@ export function DrawerContent() {
     <Alert severity={addFriendSuccess ? 'success' : 'error'} onClose={() => {}}>{alertText}</Alert>
 
     ) 
-
+    if (!state.isAuthenticated) {
+        return <p>Please log in</p>
+    }
     
     return (
         
