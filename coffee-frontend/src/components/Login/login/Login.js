@@ -127,7 +127,6 @@ function LoginForm() {
             payload: loginResponse.data
         })
         const user = await getCurrentUser()
-        console.log(user)
         dispatch({type: "GETUSER", 
                 payload: user.data})
         history.push("/drink")

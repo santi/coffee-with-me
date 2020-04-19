@@ -21,7 +21,6 @@ class OAuth2RedirectHandler extends Component {
     getUser = async ()  => {
         const user = await getCurrentUser();
         const dispatch = this.context;
-        console.log(dispatch);
         dispatch({type: "GETUSER", 
         payload: user.data})
 

@@ -4,7 +4,6 @@ import {AuthContext} from '../../../utils/auth'
 
 function Profile() {
     const { state } = React.useContext(AuthContext);
-    console.log(state);
 
         return (
             <div className="profile-container">

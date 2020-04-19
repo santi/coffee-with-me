@@ -56,7 +56,6 @@ function SignupForm() {
         setHelperText('Login Successfully');
         const signuprequest = {email, password, name}
         const signupResponse = await signup(signuprequest)
-        console.log(signupResponse);
       } else {
         setError(true);
         setHelperText('Password is not secure enough')

@@ -32,7 +32,6 @@ const reducer = (state, action) => {
     switch (action.type) {
 
       case "LOGIN":
-        console.log('LOGIN CALLED')
         return {
           ...state,
           isAuthenticated: true,
@@ -46,7 +45,6 @@ const reducer = (state, action) => {
           user: null
         };
     case  "GETUSER":
-        console.log(action.payload)
         return {
             ...state,
             user: action.payload
@@ -105,12 +103,10 @@ function Wrapper() {
   useEffect(() => {
     async function getUser() {
         const user = await getCurrentUser()
-        console.log(user)
         dispatch({type: "GETUSER", 
                 payload: user.data})
         history.push("/drink")
     }
-    console.log('calling get user')
     getUser();
 }, []);
 
