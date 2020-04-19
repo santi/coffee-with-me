@@ -14,7 +14,7 @@ import javax.validation.constraints.Email
 @Table(
     name = "user_account",
     indexes = [Index(columnList = "email", name = "user_account_email_uix", unique = true)])
-class User(
+data class User(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
