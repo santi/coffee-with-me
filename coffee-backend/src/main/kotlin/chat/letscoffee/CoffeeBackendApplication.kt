@@ -19,8 +19,8 @@ class CoffeeBackendApplication {
     @Bean
     fun pushService(): PushService {
         return PushService(
-            CONFIG.getString("VAPID_PUBLIC_KEY"),
-            CONFIG.getString("VAPID_PRIVATE_KEY")
+            CONFIG.getString("vapid.key.public"),
+            CONFIG.getString("vapid.key.private")
         )
     }
 
@@ -29,9 +29,9 @@ class CoffeeBackendApplication {
     fun dataSource(): DataSource {
         return DataSourceBuilder.create()
             .driverClassName("org.postgresql.Driver")
-            .url("${CONFIG.getString("POSTGRES_URL")}/${CONFIG.getString("POSTGRES_DATABASENAME")}")
-            .username(CONFIG.getString("POSTGRES_USERNAME"))
-            .password(CONFIG.getString("POSTGRES_PASSWORD"))
+            .url("${CONFIG.getString("postgres.url")}/${CONFIG.getString("postgres.databasename")}")
+            .username(CONFIG.getString("postgres.username"))
+            .password(CONFIG.getString("postgres.password"))
             .build()
     }
 
