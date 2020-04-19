@@ -1,9 +1,8 @@
 package chat.letscoffee
 
 import chat.letscoffee.config.AppProperties
+import chat.letscoffee.config.EnvironmentConfig
 import nl.martijndwars.webpush.PushService
-import org.apache.commons.configuration2.Configuration
-import org.apache.commons.configuration2.builder.fluent.Configurations
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
@@ -19,8 +18,8 @@ class CoffeeBackendApplication {
     @Bean
     fun pushService(): PushService {
         return PushService(
-            CONFIG.getString("vapid.key.public"),
-            CONFIG.getString("vapid.key.private")
+            EnvironmentConfig.getString("VAPID_PUBLIC_KEY"),
+            EnvironmentConfig.getString("VAPID_PRIVATE_KEY")
         )
     }
 
@@ -29,14 +28,10 @@ class CoffeeBackendApplication {
     fun dataSource(): DataSource {
         return DataSourceBuilder.create()
             .driverClassName("org.postgresql.Driver")
-            .url("${CONFIG.getString("postgres.url")}/${CONFIG.getString("postgres.databasename")}")
-            .username(CONFIG.getString("postgres.username"))
-            .password(CONFIG.getString("postgres.password"))
+            .url("${EnvironmentConfig.getString("POSTGRES_URL")}/${EnvironmentConfig.getString("POSTGRES_DATABASENAME")}")
+            .username(EnvironmentConfig.getString("POSTGRES_USERNAME"))
+            .password(EnvironmentConfig.getString("POSTGRES_PASSWORD"))
             .build()
-    }
-
-    companion object {
-        val CONFIG: Configuration = Configurations().properties("credentials/secrets.properties")
     }
 }
 
