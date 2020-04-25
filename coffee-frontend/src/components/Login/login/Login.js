@@ -114,7 +114,7 @@ function LoginForm() {
     }, [email, password]);
   
     const handleLogin = async () => {
-      if (email === 'test@test.no' && password === 'test') {
+        try {
         setError(false);
         setHelperText('Login Successfully');
         const loginRequest = {email, password}
@@ -129,7 +129,8 @@ function LoginForm() {
                 payload: user.data})
         history.push("/drink")
 
-      } else {
+      }
+        catch (err) {
         setError(true);
         setHelperText('Incorrect username or password')
       }

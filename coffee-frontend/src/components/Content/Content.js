@@ -13,6 +13,7 @@ import DrinkCoffee from "../Coffee/DrinkCoffee"
 import {AuthContext} from '../../../utils/auth'
 
 
+import FriendRequests from "../Friends/FriendRequests"
 function Content() {
     const [currentUser, setCurrentUser] = useState('')
     const {state} = React.useContext(AuthContext);
@@ -33,6 +34,7 @@ function Content() {
             <Route path="/drink" render={() => (
               state.authenticated ? <DrinkCoffee /> : <Redirect to="/" />
             )}></Route>    
+            <Route path="/requests" component={FriendRequests}></Route>    
 
 
           </Switch>
