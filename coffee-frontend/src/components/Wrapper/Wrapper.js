@@ -47,7 +47,9 @@ const reducer = (state, action) => {
     case  "GETUSER":
         return {
             ...state,
-            user: action.payload
+            user: action.payload,
+            isAuthenticated: true,
+
         }
       default:
         return state;

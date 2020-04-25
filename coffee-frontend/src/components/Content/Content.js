@@ -10,8 +10,8 @@ import { getCurrentUser } from '../../utils/loginUtils';
 import Profile from '../Login/profile/Profile'
 import OAuth2RedirectHandler from '../Login/oauth2/OAuth2RedirectHandler'
 import DrinkCoffee from "../Coffee/DrinkCoffee"
-import {AuthContext} from '../../../utils/auth'
-
+import {AuthContext} from '../../utils/auth'
+import MeetingRoom from "../Meetings/MeetingRoom"
 
 function Content() {
     const [currentUser, setCurrentUser] = useState('')
@@ -31,7 +31,10 @@ function Content() {
             <Route path="/signup" component={Signup}></Route>   
             <Route  path="/login" component={Login}></Route>  
             <Route path="/drink" render={() => (
-              state.authenticated ? <DrinkCoffee /> : <Redirect to="/" />
+              state.isAuthenticated ? <DrinkCoffee /> : <Redirect to="/" />
+            )}></Route>    
+              <Route path="/meeting-room" render={() => (
+              state.isAuthenticated ? <MeetingRoom /> : <Redirect to="/" />
             )}></Route>    
 
 
