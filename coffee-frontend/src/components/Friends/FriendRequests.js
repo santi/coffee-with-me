@@ -7,7 +7,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import Button from '@material-ui/core/Button';
 import {makeStyles } from '@material-ui/core/styles';
-import {acceptFriend, rejectFriend, FriendContext} from '../../utils/friendUtils'
+import {acceptFriend, rejectFriend, FriendContext, getFriendRequests, getFriends} from '../../utils/friendUtils'
 import Alert from '@material-ui/lab/Alert';
 var moment = require('moment');
 
@@ -40,13 +40,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function FriendRequest() {
     const { state } = React.useContext(AuthContext);
-    const {friends} = React.useContext(FriendContext);
+    const {friends, friendsDispatch} = React.useContext(FriendContext);
     const requests = friends.requests;
     const [alertText, setAlertText] = useState('');
     const [alertSuccess, setAlertSuccess] = useState(false);
     const [showAlert, setShowAlert] = useState(false)
     const classes = useStyles();
-   
     useEffect(() => {
   
  
@@ -58,7 +57,7 @@ export default function FriendRequest() {
             console.log(response)
             setAlertText('Accepted friend request')
             setAlertSuccess(true);
-
+            refresh();
             
         }
         catch (err) {
@@ -77,6 +76,10 @@ export default function FriendRequest() {
             const response = await rejectFriend(id)
             setAlertText('Rejected friend request')
             setAlertSuccess(true);
+            friendsDispatch({
+                type: "REFRESH",
+            })
+            refresh();
 
             
         }
@@ -89,7 +92,12 @@ export default function FriendRequest() {
         handleAlertClose();
       };
 
-
+    const refresh = async () => {
+        const friends = await getFriends();
+        friendsDispatch({type: "GETFRIENDS", payload: friends.data})
+        const requests = await getFriendRequests();
+        friendsDispatch({type: "REQUESTS", payload: requests.data})
+    }
     
     const handleAlertClose = () => {
     setTimeout( () => {
@@ -109,12 +117,15 @@ export default function FriendRequest() {
     if (!state.isAuthenticated) {
         return <p>Please log in to view this page</p>
     }
+    if(requests.length === 0) {
+        return <p>You have no pending friends requests</p>
+    }
     
     return (
         
         <div>
         {showAlert && alert}
-
+        
         <List className={classes.list}>
         {requests.map((request, index) => (
             <ListItem button key={request.id}>

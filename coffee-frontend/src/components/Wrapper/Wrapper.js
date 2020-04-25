@@ -55,7 +55,7 @@ const reducer = (state, action) => {
   };
 
 
-  const friendReducer = (state, action) => {
+  const friendReducer =  (state, action) => {
     switch (action.type) {
 
       case "GETFRIENDS":
@@ -64,11 +64,17 @@ const reducer = (state, action) => {
           friends: action.payload
         };
         case "REQUESTS":
+        
           return {
             ...state,
             requests: action.payload
           };
-
+      case "REFRESH":
+        return {
+          ...state,
+          requests: action.payload.requests,
+          friends: action.payload.friends,
+        }
       default:
         return state;
     }

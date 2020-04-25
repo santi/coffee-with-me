@@ -14,9 +14,18 @@ import {AuthContext} from '../../../utils/auth'
 
 
 import FriendRequests from "../Friends/FriendRequests"
+import {AuthContext} from '../../utils/auth'
+
+
 function Content() {
     const [currentUser, setCurrentUser] = useState('')
+<<<<<<< HEAD
     const {state} = React.useContext(AuthContext);
+=======
+    const { state } = React.useContext(AuthContext);
+
+
+>>>>>>> e3b78a7... FIx: Add redirect when not logged in
     useEffect(() => {
       const currentUser = getCurrentUser();
       setCurrentUser(currentUser);
