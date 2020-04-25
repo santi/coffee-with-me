@@ -19,13 +19,7 @@ import {AuthContext} from '../../utils/auth'
 
 function Content() {
     const [currentUser, setCurrentUser] = useState('')
-<<<<<<< HEAD
     const {state} = React.useContext(AuthContext);
-=======
-    const { state } = React.useContext(AuthContext);
-
-
->>>>>>> e3b78a7... FIx: Add redirect when not logged in
     useEffect(() => {
       const currentUser = getCurrentUser();
       setCurrentUser(currentUser);
@@ -43,8 +37,9 @@ function Content() {
             <Route path="/drink" render={() => (
               state.authenticated ? <DrinkCoffee /> : <Redirect to="/" />
             )}></Route>    
-            <Route path="/requests" component={FriendRequests}></Route>    
-
+            <Route path="/requests" render={() => (
+              state.authenticated ? <FriendRequests /> : <Redirect to="/" />
+            )}></Route>    
 
           </Switch>
           </div>
