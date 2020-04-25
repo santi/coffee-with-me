@@ -51,14 +51,14 @@ function SignupForm() {
     }, [email, password]);
   
     const handleSignup = async () => {
-      if (password.length > 3) {
+      if (password.length > 5) {
         setError(false);
-        setHelperText('Login Successfully');
+        setHelperText('Signed up successfully');
         const signuprequest = {email, password, name}
         const signupResponse = await signup(signuprequest)
       } else {
         setError(true);
-        setHelperText('Password is not secure enough')
+        setHelperText('Password is not secure enough, must be at least six characters')
       }
     };
     // Handle enter press to login

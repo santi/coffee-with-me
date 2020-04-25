@@ -11,9 +11,7 @@ import { Link, Redirect } from 'react-router-dom'
  import fbLogo from '../../../img/fb-logo.png';
 import googleLogo from '../../../img/google-logo.png';
 import Button from '@material-ui/core/Button';
-import useRouter from "use-react-router";
 import { useHistory } from "react-router-dom";
-
 import {AuthContext} from '../../../utils/auth'
 
 
