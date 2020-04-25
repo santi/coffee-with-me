@@ -16,7 +16,7 @@ class MeetingController(
     private val userService: UserService
 ) {
     @PostMapping("/")
-    @PreAuthorize("hasRole('ROLE')")
+    @PreAuthorize("hasRole('USER')")
     fun create(
         @CurrentUser userPrincipal: UserPrincipal
     ): Meeting {
@@ -25,7 +25,7 @@ class MeetingController(
     }
 
     @DeleteMapping("/{meetingRoomId}")
-    @PreAuthorize("hasRole('ROLE')")
+    @PreAuthorize("hasRole('USER')")
     fun delete(
         @CurrentUser userPrincipal: UserPrincipal,
         @PathVariable meetingRoomId: Long
