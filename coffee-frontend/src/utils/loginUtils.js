@@ -1,73 +1,24 @@
 import { API_BASE_URL, ACCESS_TOKEN } from './constants';
-
-const request_text = (options) => {
-    const headers = new Headers({
-        'Content-Type': 'application/json',
-    })
-    
-    if(localStorage.getItem(ACCESS_TOKEN)) {
-        headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
-    }
-
-    const defaults = {headers: headers};
-    options = Object.assign({}, defaults, options);
-    return fetch(options.url, options)
-    .then(response => {
-        return response.text().then(text => {
-            if(!response.ok) {
-                return Promise.reject(text);
-            }
-            return text;
-        })
-});
-};
+import axios from 'axios'
+import React, { useState, useEffect, useContext, createContext } from "react";
 
 
-const request = (options) => {
-    const headers = new Headers({
-        'Content-Type': 'application/json',
-    })
-    
-    if(localStorage.getItem(ACCESS_TOKEN)) {
-        headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
-    }
 
-    const defaults = {headers: headers};
-    options = Object.assign({}, defaults, options);
-    return fetch(options.url, options)
-    .then(response => {
-        return response.json().then(json => {
-            if(!response.ok) {
-                return Promise.reject(json);
-            }
-            return json;
-        })
-});
-};
+export const login = (loginRequest) =>  {
+
+    return axios.post(API_BASE_URL + "/auth/login", loginRequest)
+}
+
+export const signup = (signupRequest) =>  {
+    return axios.post(API_BASE_URL + "/auth/signup", signupRequest)
+}
+
 
 export function getCurrentUser() {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem(ACCESS_TOKEN);
 
-    return request({
-        url: API_BASE_URL + "/user/me",
-        method: 'GET'
-    });
+    return axios.get(API_BASE_URL + "/user/me")
+
 }
 
-export function login(loginRequest) {
-    return request_text({
-        url: API_BASE_URL + "/auth/login",
-        method: 'POST',
-        body: JSON.stringify(loginRequest)
-    });
-}
 
-export function signup(signupRequest) {
-    return request_text({
-        url: API_BASE_URL + "/auth/signup",
-        method: 'POST',
-        body: JSON.stringify(signupRequest)
-    });
-}

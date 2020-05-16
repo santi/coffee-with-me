@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import { ACCESS_TOKEN } from '../../../utils/constants';
 import { Redirect } from 'react-router-dom'
+import { getCurrentUser } from '../../../utils/loginUtils';
+import {AuthContext} from '../../../utils/auth'
 
 class OAuth2RedirectHandler extends Component {
+
+    static contextType = AuthContext
+
+
+
     getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
         var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -11,11 +18,22 @@ class OAuth2RedirectHandler extends Component {
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     };
 
+    getUser = async ()  => {
+        const user = await getCurrentUser();
+        const {dispatch} = this.context;
+        console.log(dispatch);
+        console.log(this.context);
+        dispatch({type: "GETUSER", 
+        payload: user.data})
+
+    }
+
     render() {        
         const token = this.getUrlParameter('token');
         const error = this.getUrlParameter('error');
 
         if(token) {
+            this.getUser();
             localStorage.setItem(ACCESS_TOKEN, token);
             return <Redirect to={{
                 pathname: "/profile",
