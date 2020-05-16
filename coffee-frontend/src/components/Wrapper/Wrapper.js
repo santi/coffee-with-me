@@ -5,21 +5,20 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import Badge from '@material-ui/core/Badge';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { getCurrentUser } from '../../utils/loginUtils';
 import Content from '../Content/Content'
 import { useHistory } from "react-router-dom";
 import {AuthContext} from '../../utils/auth'
-
-
+import {DrawerContent} from '../DrawerContent/DrawerContent'
+import {FriendContext, getFriends, getFriendRequests} from '../../utils/friendUtils'
 
 
 const initialState = {
@@ -49,13 +48,37 @@ const reducer = (state, action) => {
             ...state,
             user: action.payload,
             isAuthenticated: true,
-
         }
       default:
         return state;
     }
   };
 
+
+  const friendReducer =  (state, action) => {
+    switch (action.type) {
+
+      case "GETFRIENDS":
+        return {
+          ...state,
+          friends: action.payload
+        };
+        case "REQUESTS":
+        
+          return {
+            ...state,
+            requests: action.payload
+          };
+      case "REFRESH":
+        return {
+          ...state,
+          requests: action.payload.requests,
+          friends: action.payload.friends,
+        }
+      default:
+        return state;
+    }
+  };
 
 const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
@@ -92,13 +115,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Wrapper() {
-  const dummyCategories = ['This is a list of all my friends']
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const auth = React.useState(true);
-  const [currentUser, setCurrentUser] = useState('')
   const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [friends, friendsDispatch] = React.useReducer(friendReducer, {friends: [], requests: []});
+  console.log(friends);
   const history = useHistory();
 
 
@@ -108,6 +130,15 @@ function Wrapper() {
         dispatch({type: "GETUSER", 
                 payload: user.data})
         history.push("/drink")
+        getMyFriends();
+    }
+    async function getMyFriends() {
+      const friends = await getFriends();
+      friendsDispatch({type: "GETFRIENDS", payload: friends.data})
+      const requests = await getFriendRequests();
+      friendsDispatch({type: "REQUESTS", payload: requests.data})
+
+
     }
     getUser();
 }, []);
@@ -123,21 +154,18 @@ function handleProfileClick() {
     console.log('profile clicked');
 } 
 
-const drawer = (
-    <div>
-      <List>
-        {dummyCategories.map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
+const handleRequestsClick = () => {
+  history.push("/requests")
+}
+
 return (
     <AuthContext.Provider value={{
         state,
         dispatch
+      }}>
+          <FriendContext.Provider value={{
+        friends,
+        friendsDispatch
       }}>
     <div className={classes.root}>
       <CssBaseline />
@@ -166,7 +194,14 @@ return (
               >
                 <AccountCircle />
               </IconButton>
-              
+
+              {friends.requests.length > 0 &&
+                 <IconButton aria-label="show new notifications" color="inherit" onClick={handleRequestsClick}>
+                 <Badge badgeContent={friends.requests.length} color="secondary">
+                   <NotificationsIcon />
+                 </Badge>
+               </IconButton>
+}
             </div>
           )}
         </Toolbar>
@@ -190,7 +225,7 @@ return (
             <IconButton onClick={handleDrawerToggle} className={classes.closeMenuButton}>
               <CloseIcon/>
             </IconButton>
-            {drawer}
+            <DrawerContent/>
           </Drawer>
         </Hidden>
 <Hidden xsDown implementation="css">
@@ -202,7 +237,7 @@ return (
             }}
           >
             <div className={classes.toolbar} />
-            {drawer}
+            <DrawerContent/>
           </Drawer>  
         </Hidden>
       </nav>
@@ -210,6 +245,7 @@ return (
         <Content />
       </div>
     </div>
+    </FriendContext.Provider>
     </AuthContext.Provider>
   );
 }
