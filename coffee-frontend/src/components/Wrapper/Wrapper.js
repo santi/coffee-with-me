@@ -8,15 +8,17 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import Badge from '@material-ui/core/Badge';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { getCurrentUser } from '../../utils/loginUtils';
 import Content from '../Content/Content'
 import { useHistory } from "react-router-dom";
 import {AuthContext} from '../../utils/auth'
 import {DrawerContent} from '../DrawerContent/DrawerContent'
-import {FriendContext, getFriends} from '../../utils/friendUtils'
+import {FriendContext, getFriends, getFriendRequests} from '../../utils/friendUtils'
 
 
 const initialState = {
@@ -53,7 +55,7 @@ const reducer = (state, action) => {
   };
 
 
-  const friendReducer = (state, action) => {
+  const friendReducer =  (state, action) => {
     switch (action.type) {
 
       case "GETFRIENDS":
@@ -61,7 +63,18 @@ const reducer = (state, action) => {
           ...state,
           friends: action.payload
         };
-
+        case "REQUESTS":
+        
+          return {
+            ...state,
+            requests: action.payload
+          };
+      case "REFRESH":
+        return {
+          ...state,
+          requests: action.payload.requests,
+          friends: action.payload.friends,
+        }
       default:
         return state;
     }
@@ -106,8 +119,8 @@ function Wrapper() {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [state, dispatch] = React.useReducer(reducer, initialState);
-  const [friends, friendsDispatch] = React.useReducer(friendReducer, {friends: []});
-
+  const [friends, friendsDispatch] = React.useReducer(friendReducer, {friends: [], requests: []});
+  console.log(friends);
   const history = useHistory();
 
 
@@ -121,8 +134,11 @@ function Wrapper() {
     }
     async function getMyFriends() {
       const friends = await getFriends();
-      console.log(friends);
       friendsDispatch({type: "GETFRIENDS", payload: friends.data})
+      const requests = await getFriendRequests();
+      friendsDispatch({type: "REQUESTS", payload: requests.data})
+
+
     }
     getUser();
 }, []);
@@ -137,6 +153,10 @@ function handleDrawerToggle() {
 function handleProfileClick() {
     console.log('profile clicked');
 } 
+
+const handleRequestsClick = () => {
+  history.push("/requests")
+}
 
 return (
     <AuthContext.Provider value={{
@@ -174,7 +194,14 @@ return (
               >
                 <AccountCircle />
               </IconButton>
-              
+
+              {friends.requests.length > 0 &&
+                 <IconButton aria-label="show new notifications" color="inherit" onClick={handleRequestsClick}>
+                 <Badge badgeContent={friends.requests.length} color="secondary">
+                   <NotificationsIcon />
+                 </Badge>
+               </IconButton>
+}
             </div>
           )}
         </Toolbar>

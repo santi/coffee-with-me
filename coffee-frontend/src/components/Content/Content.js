@@ -13,6 +13,10 @@ import DrinkCoffee from "../Coffee/DrinkCoffee"
 import {AuthContext} from '../../utils/auth'
 import MeetingRoom from "../Meetings/MeetingRoom"
 
+import FriendRequests from "../Friends/FriendRequests"
+import {AuthContext} from '../../utils/auth'
+
+
 function Content() {
     const [currentUser, setCurrentUser] = useState('')
     const {state} = React.useContext(AuthContext);
@@ -36,7 +40,9 @@ function Content() {
               <Route path="/meeting-room" render={() => (
               state.isAuthenticated ? <MeetingRoom /> : <Redirect to="/" />
             )}></Route>    
-
+            <Route path="/requests" render={() => (
+              state.authenticated ? <FriendRequests /> : <Redirect to="/" />
+            )}></Route>    
 
           </Switch>
           </div>
