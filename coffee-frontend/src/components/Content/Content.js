@@ -12,9 +12,7 @@ import OAuth2RedirectHandler from '../Login/oauth2/OAuth2RedirectHandler'
 import DrinkCoffee from "../Coffee/DrinkCoffee"
 import {AuthContext} from '../../utils/auth'
 import MeetingRoom from "../Meetings/MeetingRoom"
-
 import FriendRequests from "../Friends/FriendRequests"
-import {AuthContext} from '../../utils/auth'
 
 
 function Content() {

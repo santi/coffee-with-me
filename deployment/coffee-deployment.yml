@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coffee-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: coffee-frontend
+  template:
+    metadata:
+      labels:
+        app: coffee-frontend
+    spec:
+      containers:
+        - name: coffee-frontend
+          image: santiario/coffee-frontend:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coffee-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: coffee-backend
+  template:
+    metadata:
+      labels:
+        app: coffee-backend
+    spec:
+      containers:
+        - name: coffee-backend
+          image: santiario/coffee-backend:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: coffee-postgres-secret
+                  key: postgresUsername
+            - name: POSTGRES_DATABASENAME
+              valueFrom:
+                secretKeyRef:
+                  name: coffee-postgres-secret
+                  key: postgresDatabaseName
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coffee-postgres-secret
+                  key: postgresPassword
+            - name: POSTGRES_URL
+              valueFrom:
+                secretKeyRef:
+                  name: coffee-postgres-secret
+                  key: postgresUrl
+            - name: VAPID_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: coffee-vapid-secret
+                  key: vapidPublicKey
+            - name: VAPID_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: coffee-postgres-secret
+                  key: vapidPrivateKey
