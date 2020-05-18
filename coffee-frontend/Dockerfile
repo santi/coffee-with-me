@@ -10,4 +10,4 @@ RUN yarn build
 FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
 EXPOSE 8080
-CMD ["exec nginx -g 'daemon off;'"]
+ENTRYPOINT exec nginx -g 'daemon off;'
