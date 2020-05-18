@@ -9,5 +9,5 @@ RUN yarn build
 # production container
 FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 8080
-ENTRYPOINT exec nginx -g 'daemon off;'
+
+EXPOSE 80
