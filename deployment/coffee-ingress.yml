@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    acme.cert-manager.io/http01-edit-in-place: "true"
+  name: coffee-ingress
+spec:
+  tls:
+    - hosts:
+        - coffee.iblack.sexy
+      secretName: coffee-acme-certificate
+  rules:
+    - host: coffee.iblack.sexy
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: coffee-frontend
+              servicePort: 8080
+          - path: /api/
+            backend:
+              serviceName: coffee-backend
+              servicePort: 8080
